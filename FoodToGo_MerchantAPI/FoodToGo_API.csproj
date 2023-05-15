@@ -21,11 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\Database\" />
-    <Folder Include="Repository\IRepository\" />
   </ItemGroup>
 
 </Project>

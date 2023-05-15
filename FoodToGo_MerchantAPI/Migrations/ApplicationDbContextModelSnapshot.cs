@@ -22,7 +22,7 @@ namespace FoodToGo_API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FoodToGo_API.Models.Customer", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Customer", b =>
                 {
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -48,54 +48,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.DTO.Promotion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("money");
-
-                    b.Property<int>("DiscountCreatorMerchanId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DiscountPercentage")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuantityLeft")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DiscountCreatorMerchanId");
-
-                    b.ToTable("Promotion");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.MenuItem", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MenuItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -125,7 +78,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("MenuItems");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.MenuItemImage", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MenuItemImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +104,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("MenuItemImages");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.MenuItemType", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MenuItemType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +121,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("MenuItemTypes");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Merchant", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Merchant", b =>
                 {
                     b.Property<int>("MerchantId")
                         .ValueGeneratedOnAdd()
@@ -180,15 +133,40 @@ namespace FoodToGo_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<TimeSpan>("BanLength")
+                        .HasColumnType("time");
+
+                    b.Property<string>("BanReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("BanStartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CloseHour_1")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CloseHour_2")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("GeoLatitude")
                         .HasColumnType("float");
 
                     b.Property<double>("GeoLongtitude")
                         .HasColumnType("float");
 
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OpenHour_1")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("OpenHour_2")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -204,7 +182,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("Merchants");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OnlineCustomerLocation", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineCustomerLocation", b =>
                 {
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -220,7 +198,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("OnlineCustomerLocations");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OnlineShipperStatus", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineShipperStatus", b =>
                 {
                     b.Property<int>("ShipperId")
                         .HasColumnType("int");
@@ -239,7 +217,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("OnlineShipperStatuses");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Order", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -308,7 +286,7 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OrderDetail", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OrderDetail", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -333,14 +311,74 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("OrdersDetails");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Shipper", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Promotion", b =>
                 {
-                    b.Property<int>("ShipperId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("money");
+
+                    b.Property<int>("DiscountCreatorMerchanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityLeft")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountCreatorMerchanId");
+
+                    b.ToTable("Promotion");
+                });
+
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Shipper", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("BanLength")
+                        .HasColumnType("time");
+
+                    b.Property<string>("BanReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("BanStartTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -358,12 +396,12 @@ namespace FoodToGo_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ShipperId");
+                    b.HasKey("UserId");
 
                     b.ToTable("Shippers");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.User", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -412,9 +450,9 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Customer", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Customer", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.User", "User")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.User", "User")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -423,26 +461,15 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.DTO.Promotion", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MenuItem", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.Merchant", "Merchant")
-                        .WithMany()
-                        .HasForeignKey("DiscountCreatorMerchanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Merchant");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.MenuItem", b =>
-                {
-                    b.HasOne("FoodToGo_API.Models.MenuItemType", "MenuItemType")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.MenuItemType", "MenuItemType")
                         .WithMany()
                         .HasForeignKey("ItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FoodToGo_API.Models.Merchant", "Merchant")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
                         .WithMany()
                         .HasForeignKey("MerchantId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -453,9 +480,9 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Merchant");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.MenuItemImage", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MenuItemImage", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.MenuItem", "MenuItem")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.MenuItem", "MenuItem")
                         .WithMany()
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -464,9 +491,9 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("MenuItem");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Merchant", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Merchant", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.User", "User")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -475,9 +502,9 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OnlineCustomerLocation", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineCustomerLocation", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.Customer", "Customer")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -486,9 +513,9 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OnlineShipperStatus", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineShipperStatus", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.Shipper", "Shipper")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Shipper", "Shipper")
                         .WithMany()
                         .HasForeignKey("ShipperId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -497,27 +524,27 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Shipper");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Order", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Order", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.Customer", "Customer")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FoodToGo_API.Models.Merchant", "Merchant")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
                         .WithMany()
                         .HasForeignKey("MerchantId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FoodToGo_API.Models.DTO.Promotion", "Promotion")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Promotion", "Promotion")
                         .WithMany()
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FoodToGo_API.Models.Shipper", "Shipper")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Shipper", "Shipper")
                         .WithMany()
                         .HasForeignKey("ShipperId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -532,15 +559,15 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Shipper");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.OrderDetail", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OrderDetail", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.MenuItem", "MenuItem")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.MenuItem", "MenuItem")
                         .WithMany()
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FoodToGo_API.Models.Order", "Order")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -551,18 +578,29 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Shipper", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Promotion", b =>
                 {
-                    b.HasOne("FoodToGo_API.Models.User", "User")
+                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
                         .WithMany()
-                        .HasForeignKey("ShipperId")
+                        .HasForeignKey("DiscountCreatorMerchanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Merchant");
+                });
+
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Shipper", b =>
+                {
+                    b.HasOne("FoodToGo_API.Models.DbEntities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.Order", b =>
+            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
                 });

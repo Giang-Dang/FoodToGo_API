@@ -1,4 +1,4 @@
-﻿using FoodToGo_API.Models;
+﻿using FoodToGo_API.Models.DbEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodToGo_API.Data
