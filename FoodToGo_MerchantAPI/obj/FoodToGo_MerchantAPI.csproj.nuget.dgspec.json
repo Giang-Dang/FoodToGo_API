@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Temp\\Temp_Code\\TKPM\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj": {}
+    "D:\\dev\\Code\\Repos\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj": {}
   },
   "projects": {
-    "D:\\Temp\\Temp_Code\\TKPM\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj": {
+    "D:\\dev\\Code\\Repos\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Temp\\Temp_Code\\TKPM\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj",
+        "projectUniqueName": "D:\\dev\\Code\\Repos\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj",
         "projectName": "FoodToGo_MerchantAPI",
-        "projectPath": "D:\\Temp\\Temp_Code\\TKPM\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj",
-        "packagesPath": "C:\\Users\\dangv\\.nuget\\packages\\",
-        "outputPath": "D:\\Temp\\Temp_Code\\TKPM\\FoodToGo_API\\FoodToGo_MerchantAPI\\obj\\",
+        "projectPath": "D:\\dev\\Code\\Repos\\FoodToGo_API\\FoodToGo_MerchantAPI\\FoodToGo_MerchantAPI.csproj",
+        "packagesPath": "C:\\Users\\Giang Dang\\.nuget\\packages\\",
+        "outputPath": "D:\\dev\\Code\\Repos\\FoodToGo_API\\FoodToGo_MerchantAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "E:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\dangv\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Giang Dang\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,13 +45,39 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[7.0.5, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.5, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.5, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
