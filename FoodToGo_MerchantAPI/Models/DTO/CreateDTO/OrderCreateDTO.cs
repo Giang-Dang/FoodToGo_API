@@ -1,5 +1,5 @@
 ﻿using FoodToGo_API.Models.Enums;
-namespace FoodToGo_API.Models.DTO
+namespace FoodToGo_API.Models.DTO.CreateDTO
 {
     public class OrderCreateDTO
     {
