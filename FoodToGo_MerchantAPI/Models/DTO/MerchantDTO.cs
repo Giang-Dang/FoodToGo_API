@@ -14,11 +14,5 @@ namespace FoodToGo_API.Models.DTO
         public string PhoneNumber { get; set; }
         public double GeoLatitude { get; set; }
         public double GeoLongtitude { get; set; }
-        public bool IsBanned { get; set; }
-        public DateTime BanStartTime { get; set; }
-        public TimeSpan BanLength { get; set; }
-        public string BanReason { get; set; }
-        public List<NormalOpenHoursDTO> NormalOpenHoursList { get; set; }
-        public List<OverrideOpenHoursDTO> OverrideOpenHoursList { get; set; }
     }
 }

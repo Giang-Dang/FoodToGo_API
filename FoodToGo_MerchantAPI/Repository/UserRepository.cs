@@ -94,21 +94,21 @@ namespace FoodToGo_API.Repository
 
             //if user was found and input password was correct.
             
-            if(user.IsBanned)
-            {
-                if(DateTime.Now <= user.BanStartTime.Add(user.BanLength))
-                {
-                    return new LoginResponseDTO()
-                    {
-                        User = null,
-                        Token = "",
-                        IsSuccess = false,
-                        ErrorMessage = 
-                            $"User {user.Username} has been banned since {user.BanStartTime.ToShortDateString}."
-                            + $"The ban period is {user.BanLength.Days} day(s)."
-                    };
-                }
-            }
+            //if(user.IsBanned)
+            //{
+            //    if(DateTime.Now <= user.BanStartTime.Add(user.BanLength))
+            //    {
+            //        return new LoginResponseDTO()
+            //        {
+            //            User = null,
+            //            Token = "",
+            //            IsSuccess = false,
+            //            ErrorMessage = 
+            //                $"User {user.Username} has been banned since {user.BanStartTime.ToShortDateString}."
+            //                + $"The ban period is {user.BanLength.Days} day(s)."
+            //        };
+            //    }
+            //}
 
             //Generate JWT token
             UserDTO userDTO = _mapper.Map<UserDTO>(user);
@@ -129,10 +129,7 @@ namespace FoodToGo_API.Repository
 
             user.Salt = CreateSalt(saltLength);
             user.Password = PBKDF2_Hash(user.Password, user.Salt);
-            user.IsBanned = false;
             user.Role = UserRole.User.ToString();
-            user.BanLength = TimeSpan.Zero;
-            user.BanReason = "";
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();

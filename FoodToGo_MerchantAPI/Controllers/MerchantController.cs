@@ -2,11 +2,11 @@
 using FoodToGo_API.Models;
 using FoodToGo_API.Models.DbEntities;
 using FoodToGo_API.Models.DTO;
+using FoodToGo_API.Models.DTO.CreateDTO;
+using FoodToGo_API.Models.DTO.UpdateDTO;
 using FoodToGo_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 
@@ -34,11 +34,12 @@ namespace FoodToGo_API.Controllers
             this._response = new();
         }
 
-        [HttpGet]
-        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [HttpGet(Name = "GetAllMerchants")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMerchants(
             [FromQuery(Name = "OpenHoursCheckTime")] DateTime? openHoursCheckTime,
             [FromQuery(Name = "SearchName")] string? searchName, 
@@ -50,17 +51,9 @@ namespace FoodToGo_API.Controllers
             {
                 List<Merchant> merchantList = await _dbMerchant.GetAllAsync(null, pageSize, pageNumber);
 
-                List<Merchant> openMerchantList = new();
                 if (openHoursCheckTime.HasValue)
                 {
-                    foreach(Merchant merchant in merchantList)
-                    {
-                        if(await IsMerchantOpen(merchant, openHoursCheckTime.Value))
-                        {
-                            openMerchantList.Add(merchant);
-                        }
-                    }
-                    merchantList = new(openMerchantList);
+                    merchantList = await GetOpenMerchantsAsync(merchantList, openHoursCheckTime.Value);
                 }
 
                 if(!string.IsNullOrEmpty(searchName))
@@ -90,12 +83,13 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetMerchant")]
-        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetMerchant(int id)
         {
             try
@@ -104,13 +98,11 @@ namespace FoodToGo_API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("id cannot be 0.");
+                    _response.ErrorMessages.Add("ID cannot be 0.");
                     return BadRequest(_response);
                 }
 
                 var merchant = await _dbMerchant.GetAsync(m => m.MerchantId == id);
-                var normalOpenHoursList = await _dbNormalOpenHours.GetAllAsync(n => n.MerchantId == id);
-                var overrideOpenHoursList = await _dbOverrideOpenHours.GetAllAsync(o => o.MerchantId == id);
                 if (merchant == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -120,10 +112,6 @@ namespace FoodToGo_API.Controllers
                 }
 
                 var merchantDTO = _mapper.Map<MerchantDTO>(merchant);
-                var normalOpenHoursListDTO = _mapper.Map<List<NormalOpenHoursDTO>>(normalOpenHoursList);
-                var overrideOpenHoursListDTO = _mapper.Map<List<OverrideOpenHoursDTO>>(overrideOpenHoursList);
-                merchantDTO.NormalOpenHoursList = normalOpenHoursListDTO;
-                merchantDTO.OverrideOpenHoursList = overrideOpenHoursListDTO;
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -140,7 +128,176 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        private async Task<bool> IsMerchantOpen(Merchant merchant, DateTime checkDateTime)
+        [HttpGet("byuser/{id:int}", Name = "GetMerchantByUserId")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetMerchantByUserId(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("User id cannot be 0.");
+                    return BadRequest(_response);
+                }
+
+                var merchant = await _dbMerchant.GetAsync(m => m.UserId == id);
+
+                if (merchant == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Merchant is not found.");
+                    return NotFound(_response);
+                }
+
+                var merchantDTO = _mapper.Map<MerchantDTO>(merchant);
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = merchantDTO;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpPost]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<APIResponse>> CreateMerchant([FromBody] MerchantCreateDTO createDTO)
+        {
+            try
+            {
+                if (await _dbMerchant.GetAsync(m => m.Name.ToLower() == createDTO.Name.ToLower()) != null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Merchant already exists!");
+                    return BadRequest(_response);
+                }
+                if (createDTO == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Merchant cannot be null!");
+                    return BadRequest(createDTO);
+                }
+
+                Merchant merchant = _mapper.Map<Merchant>(createDTO);
+
+                await _dbMerchant.CreateAsync(merchant);
+
+                _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.Result = createDTO;
+                return CreatedAtRoute("GetMerchant", new { id = merchant.MerchantId }, _response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add($"{ex.Message}");
+            }
+            return _response;
+        }
+
+        [HttpDelete("{id:int}", Name = "DeleteMerchant")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> DeleteMerchant(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("ID cannot be 0.");
+                    return BadRequest(_response);
+                }
+
+                var merchant = await _dbMerchant.GetAsync(m => m.MerchantId == id);
+                if (merchant == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Merchant is not found!");
+                    return NotFound(_response);
+                }
+                await _dbMerchant.RemoveAsync(merchant);
+
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add($"{ex.Message}");
+            }
+            return _response;
+        }
+
+        [HttpPut("{id:int}", Name = "UpdateMerchant")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> UpdateMerchant(int id, [FromBody]MerchantUpdateDTO updateDTO)
+        {
+            try
+            {
+                if (updateDTO == null || id != updateDTO.MerchantId)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Bad Request!");
+                    return BadRequest(updateDTO);
+                }
+
+                var merchant = _mapper.Map<Merchant>(updateDTO);
+
+                await _dbMerchant.UpdateAsync(merchant);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add($"{ex.Message}");
+            }
+
+            return _response;
+        }
+        private async Task<bool> IsMerchantOpenAsync(Merchant merchant, DateTime checkDateTime)
         {
             
             var overrideHours = await _dbOverrideOpenHours.GetAllAsync(
@@ -157,7 +314,7 @@ namespace FoodToGo_API.Controllers
                 }
                 else
                 {
-                    return checkDateTime.TimeOfDay >= overrideHour.AltOpenTime.TimeOfDay && checkDateTime.TimeOfDay <= overrideHour.AltCloseTime.TimeOfDay;
+                    return checkDateTime.TimeOfDay >= overrideHour.AltOpenTime.Value.TimeOfDay && checkDateTime.TimeOfDay <= overrideHour.AltCloseTime.Value.TimeOfDay;
                 }
             }
 
@@ -176,6 +333,19 @@ namespace FoodToGo_API.Controllers
             {
                 return false;
             }
+        }
+
+        private async Task<List<Merchant>> GetOpenMerchantsAsync(List<Merchant> merchantList, DateTime openHoursCheckTime)
+        {
+            List<Merchant> openMerchantList = new();
+            foreach (Merchant merchant in merchantList)
+            {
+                if (await IsMerchantOpenAsync(merchant, openHoursCheckTime))
+                {
+                    openMerchantList.Add(merchant);
+                }
+            }
+            return openMerchantList;
         }
     }
 }

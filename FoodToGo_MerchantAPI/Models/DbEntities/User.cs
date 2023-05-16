@@ -16,12 +16,5 @@ namespace FoodToGo_API.Models.DbEntities
         public string Role { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public bool IsBanned { get; set; }
-        [AllowNull]
-        public DateTime BanStartTime { get; set; }
-        [AllowNull]
-        public TimeSpan BanLength { get; set; }
-        [AllowNull]
-        public string BanReason { get; set; }
     }
 }

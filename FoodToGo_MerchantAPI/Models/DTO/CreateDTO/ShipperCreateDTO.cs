@@ -9,9 +9,5 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
         public string MiddleName { get; set; }
         public string VehicleType { get; set; }
         public string VehicleNumberPlate { get; set; }
-        public bool IsBanned { get; set; }
-        public DateTime BanStartTime { get; set; }
-        public TimeSpan BanLength { get; set; }
-        public string BanReason { get; set; }
     }
 }
