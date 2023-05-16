@@ -19,7 +19,10 @@ namespace FoodToGo_API.Data
         public DbSet<OnlineCustomerLocation> OnlineCustomerLocations { get; set; }
         public DbSet<OnlineShipperStatus> OnlineShipperStatuses { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrdersDetails { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<NormalOpenHours> NormalOpenHours { get; set; }
+        public DbSet<OverrideOpenHours> OverrideOpenHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +32,18 @@ namespace FoodToGo_API.Data
                 .HasOne(od => od.Order)
                 .WithMany(order => order.OrderDetails)
                 .HasForeignKey(od => od.OrderId);
+
+            //1-n Merchant -> NormalOpenHours
+            modelBuilder.Entity<NormalOpenHours>()
+                .HasOne(e => e.Merchant)
+                .WithMany(m => m.NormalOpenHoursList)
+                .HasForeignKey(e => e.MerchantId);
+
+            //1-n Merchant -> OverrideOpenHours
+            modelBuilder.Entity<OverrideOpenHours>()
+                .HasOne(e => e.Merchant)
+                .WithMany(m => m.OverrideOpenHoursList)
+                .HasForeignKey(e => e.MerchantId);
 
             //decimal => ColumnType: money
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

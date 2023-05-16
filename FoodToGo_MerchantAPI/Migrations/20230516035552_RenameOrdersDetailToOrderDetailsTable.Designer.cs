@@ -4,6 +4,7 @@ using FoodToGo_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodToGo_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230516035552_RenameOrdersDetailToOrderDetailsTable")]
+    partial class RenameOrdersDetailToOrderDetailsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,6 +146,12 @@ namespace FoodToGo_API.Migrations
                     b.Property<DateTime>("BanStartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("CloseHour_1")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CloseHour_2")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("GeoLatitude")
                         .HasColumnType("float");
 
@@ -156,6 +165,12 @@ namespace FoodToGo_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("OpenHour_1")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("OpenHour_2")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -168,36 +183,6 @@ namespace FoodToGo_API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Merchants");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.NormalOpenHours", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CloseTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MerchantId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OpenTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SessionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MerchantId");
-
-                    b.ToTable("NormalOpenHours");
                 });
 
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineCustomerLocation", b =>
@@ -327,45 +312,6 @@ namespace FoodToGo_API.Migrations
                     b.HasIndex("MenuItemId");
 
                     b.ToTable("OrderDetails");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OverrideOpenHours", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AltCloseTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("AltOpenTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MerchantId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OverrideEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("OverrideStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SessionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MerchantId");
-
-                    b.ToTable("OverrideOpenHours");
                 });
 
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Promotion", b =>
@@ -560,17 +506,6 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.NormalOpenHours", b =>
-                {
-                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
-                        .WithMany("NormalOpenHoursList")
-                        .HasForeignKey("MerchantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Merchant");
-                });
-
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OnlineCustomerLocation", b =>
                 {
                     b.HasOne("FoodToGo_API.Models.DbEntities.Customer", "Customer")
@@ -647,17 +582,6 @@ namespace FoodToGo_API.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.OverrideOpenHours", b =>
-                {
-                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
-                        .WithMany("OverrideOpenHoursList")
-                        .HasForeignKey("MerchantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Merchant");
-                });
-
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Promotion", b =>
                 {
                     b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "Merchant")
@@ -678,13 +602,6 @@ namespace FoodToGo_API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Merchant", b =>
-                {
-                    b.Navigation("NormalOpenHoursList");
-
-                    b.Navigation("OverrideOpenHoursList");
                 });
 
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.Order", b =>

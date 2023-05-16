@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodToGo_API.Models.DbEntities
@@ -10,7 +11,8 @@ namespace FoodToGo_API.Models.DbEntities
         public int Id { get; set; }
         [ForeignKey("Merchant")]
         public int DiscountCreatorMerchanId { get; set; }
-        public Merchant Merchant { get; set; }
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public virtual Merchant Merchant { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public int DiscountPercentage { get; set; }

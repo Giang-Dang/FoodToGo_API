@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using FoodToGo_API.Models.Enums;
 
 namespace FoodToGo_API.Models.DbEntities
@@ -16,8 +17,11 @@ namespace FoodToGo_API.Models.DbEntities
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public bool IsBanned { get; set; }
+        [AllowNull]
         public DateTime BanStartTime { get; set; }
+        [AllowNull]
         public TimeSpan BanLength { get; set; }
+        [AllowNull]
         public string BanReason { get; set; }
     }
 }

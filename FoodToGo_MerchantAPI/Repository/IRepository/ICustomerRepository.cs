@@ -2,7 +2,7 @@
 
 namespace FoodToGo_API.Repository.IRepository
 {
-    public interface ICustomer : IRepository<Customer>
+    public interface ICustomerRepository : IRepository<Customer>
     {
         Task<Customer> UpdateAsync(Customer customer);
     }

@@ -2,6 +2,7 @@
 {
     public enum LoginFromApp
     {
+        Management,
         Merchant,
         Shipper,
         Customer

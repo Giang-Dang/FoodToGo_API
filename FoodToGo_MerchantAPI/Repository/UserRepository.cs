@@ -4,9 +4,13 @@ using FoodToGo_API.Models.DbEntities;
 using FoodToGo_API.Models.DTO;
 using FoodToGo_API.Models.Enums;
 using FoodToGo_API.Repository.IRepository;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,6 +30,20 @@ namespace FoodToGo_API.Repository
             _mapper = mapper;
             secretKey = configuration.GetValue<string>("ApiSettings:JWTSecret");
             daysUntilJwtExpiration = configuration.GetValue<int>("ApiSettings:daysUntilJwtExpiration");
+        }
+        public async Task<User> GetAsync(Expression<Func<User, bool>> filter = null, bool tracked = true)
+        {
+            IQueryable<User> query = _db.Users;
+            if (tracked == false)
+            {
+                query = query.AsNoTracking();
+            }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
         public async Task<bool> IsUniqueUser(string username)
         {
@@ -62,6 +80,17 @@ namespace FoodToGo_API.Repository
                     ErrorMessage = "The username or password is incorrect."
                 };
             }
+            bool isloginFromAppValueExist = Enum.IsDefined(typeof(LoginFromApp), loginRequestDTO.loginFromApp);
+            if (isloginFromAppValueExist == false)
+            {
+                return new LoginResponseDTO()
+                {
+                    User = null,
+                    Token = "",
+                    IsSuccess = false,
+                    ErrorMessage = "loginFromApp value is not valid."
+                };
+            }
 
             //if user was found and input password was correct.
             
@@ -94,7 +123,7 @@ namespace FoodToGo_API.Repository
             return loginResponseDTO;
         }
 
-        public async Task<UserCreateDTO> Register(RegisterationRequestDTO registerationRequestDTO)
+        public async Task<UserDTO> Register(RegisterationRequestDTO registerationRequestDTO)
         {
             User user = _mapper.Map<User>(registerationRequestDTO);
 
@@ -102,6 +131,8 @@ namespace FoodToGo_API.Repository
             user.Password = PBKDF2_Hash(user.Password, user.Salt);
             user.IsBanned = false;
             user.Role = UserRole.User.ToString();
+            user.BanLength = TimeSpan.Zero;
+            user.BanReason = "";
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
@@ -109,11 +140,11 @@ namespace FoodToGo_API.Repository
             user.Password = "";
             user.Salt = "";
 
-            UserCreateDTO userCreateDTO = _mapper.Map<UserCreateDTO>(user);
-            return userCreateDTO;
+            UserDTO userDTO = _mapper.Map<UserDTO>(user);
+            return userDTO;
         }
 
-        public async Task<User> Update(User user)
+        public async Task<User> UpdateAsync(User user)
         {
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
