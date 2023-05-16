@@ -2,6 +2,7 @@
 using FoodToGo_API.Models;
 using FoodToGo_API.Models.DbEntities;
 using FoodToGo_API.Models.DTO;
+using FoodToGo_API.Models.DTO.UpdateDTO;
 using FoodToGo_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

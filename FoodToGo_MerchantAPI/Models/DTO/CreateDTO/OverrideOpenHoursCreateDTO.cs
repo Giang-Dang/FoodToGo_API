@@ -6,7 +6,6 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
     {
         public int Id { get; set; }
         public int MerchantId { get; set; }
-        public virtual Merchant Merchant { get; set; }
         public DateTime OverrideStartDate { get; set; }
         public DateTime OverrideEndDate { get; set; }
         public int DayOfWeek { get; set; }

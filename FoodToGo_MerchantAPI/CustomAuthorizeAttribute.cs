@@ -7,12 +7,12 @@ namespace FoodToGo_API
     public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
     {
         private readonly string _claimType;
-        private readonly string _claimValue;
+        private readonly string[] _claimValues;
 
-        public CustomAuthorizeAttribute(string claimType, string claimValue)
+        public CustomAuthorizeAttribute(string claimType, params string[] claimValues)
         {
             _claimType = claimType;
-            _claimValue = claimValue;
+            _claimValues = claimValues;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -25,7 +25,7 @@ namespace FoodToGo_API
                 return;
             }
 
-            if (!user.HasClaim(_claimType, _claimValue))
+            if (!user.Claims.Any(c => c.Type == _claimType && _claimValues.Contains(c.Value)))
             {
                 context.Result = new ForbidResult();
                 return;

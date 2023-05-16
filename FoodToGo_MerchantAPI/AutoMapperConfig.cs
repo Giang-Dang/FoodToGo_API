@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FoodToGo_API.Models.DbEntities;
 using FoodToGo_API.Models.DTO;
+using FoodToGo_API.Models.DTO.CreateDTO;
+using FoodToGo_API.Models.DTO.UpdateDTO;
 
 namespace FoodToGo_API
 {
@@ -55,6 +57,14 @@ namespace FoodToGo_API
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<Customer, CustomerUpdateDTO>().ReverseMap();
             CreateMap<Customer, CustomerCreateDTO>().ReverseMap();
+
+            CreateMap<NormalOpenHours, NormalOpenHoursDTO>().ReverseMap();
+            CreateMap<NormalOpenHours, NormalOpenHoursUpdateDTO>().ReverseMap();
+            CreateMap<NormalOpenHours, NormalOpenHoursCreateDTO>().ReverseMap();
+
+            CreateMap<OverrideOpenHours, OverrideOpenHoursDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
+            CreateMap<OverrideOpenHours, OverrideOpenHoursUpdateDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
+            CreateMap<OverrideOpenHours, OverrideOpenHoursCreateDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
         }
     }
 }

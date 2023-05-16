@@ -8,7 +8,6 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
     {
         public int MerchantId { get; set; }
         public int UserId { get; set; }
-        public virtual User User { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
@@ -18,7 +17,7 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
         public DateTime BanStartTime { get; set; }
         public TimeSpan BanLength { get; set; }
         public string BanReason { get; set; }
-        public List<NormalOpenHours> NormalOpenHoursList { get; set; }
-        public List<OverrideOpenHours> OverrideOpenHoursList { get; set; }
+        public List<NormalOpenHoursCreateDTO> NormalOpenHoursList { get; set; }
+        public List<OverrideOpenHoursCreateDTO> OverrideOpenHoursList { get; set; }
     }
 }

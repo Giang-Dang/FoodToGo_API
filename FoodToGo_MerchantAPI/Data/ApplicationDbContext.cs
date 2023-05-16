@@ -21,8 +21,8 @@ namespace FoodToGo_API.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
-        public DbSet<NormalOpenHoursDTO> NormalOpenHours { get; set; }
-        public DbSet<OverrideOpenHoursDTO> OverrideOpenHours { get; set; }
+        public DbSet<NormalOpenHours> NormalOpenHours { get; set; }
+        public DbSet<OverrideOpenHours> OverrideOpenHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,13 +34,13 @@ namespace FoodToGo_API.Data
                 .HasForeignKey(od => od.OrderId);
 
             //1-n Merchant -> NormalOpenHours
-            modelBuilder.Entity<NormalOpenHoursDTO>()
+            modelBuilder.Entity<NormalOpenHours>()
                 .HasOne(e => e.Merchant)
                 .WithMany(m => m.NormalOpenHoursList)
                 .HasForeignKey(e => e.MerchantId);
 
             //1-n Merchant -> OverrideOpenHours
-            modelBuilder.Entity<OverrideOpenHoursDTO>()
+            modelBuilder.Entity<OverrideOpenHours>()
                 .HasOne(e => e.Merchant)
                 .WithMany(m => m.OverrideOpenHoursList)
                 .HasForeignKey(e => e.MerchantId);

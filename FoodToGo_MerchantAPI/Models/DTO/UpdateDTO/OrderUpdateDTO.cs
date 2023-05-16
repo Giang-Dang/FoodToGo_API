@@ -19,7 +19,7 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
         public float ShipperRating { get; set; }
         public float CustomerRating { get; set; }
         public float MerchantRating { get; set; }
-        public List<OrderDetailDTO> OrderDetails { get; set; }
+        public List<OrderDetailUpdateDTO> OrderDetails { get; set; }
 
     }
 }
