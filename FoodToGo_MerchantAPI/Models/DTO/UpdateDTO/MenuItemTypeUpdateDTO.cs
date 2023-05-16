@@ -1,5 +1,5 @@
 ﻿
-namespace FoodToGo_API.Models.DTO
+namespace FoodToGo_API.Models.DTO.UpdateDTO
 {
     public class MenuItemTypeUpdateDTO
     {

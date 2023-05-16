@@ -1,7 +1,7 @@
 ﻿
-namespace FoodToGo_API.Models.DTO
+namespace FoodToGo_API.Models.DTO.UpdateDTO
 {
-    public class ShipperCreateDTO
+    public class ShipperUpdateDTO
     {
         public int UserId { get; set; }
         public string FirstName { get; set; }

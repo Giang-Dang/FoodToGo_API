@@ -1,7 +1,7 @@
 ﻿
-namespace FoodToGo_API.Models.DTO
+namespace FoodToGo_API.Models.DTO.CreateDTO
 {
-    public class OrderDetailUpdateDTO
+    public class OrderDetailCreateDTO
     {
         public int OrderId { get; set; }
         public int MenuItemId { get; set; }

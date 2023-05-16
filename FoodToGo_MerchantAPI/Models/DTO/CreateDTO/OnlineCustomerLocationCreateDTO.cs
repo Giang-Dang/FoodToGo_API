@@ -1,6 +1,6 @@
 ﻿
 
-namespace FoodToGo_API.Models.DTO
+namespace FoodToGo_API.Models.DTO.CreateDTO
 {
     public class OnlineCustomerLocationCreateDTO
     {
