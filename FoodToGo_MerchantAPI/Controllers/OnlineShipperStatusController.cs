@@ -36,6 +36,9 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllOnlineShipperStatuses(
             bool? IsAvailable = null,
+            [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
+            [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
+            [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -46,6 +49,22 @@ namespace FoodToGo_API.Controllers
                 if (IsAvailable.HasValue)
                 {
                     onlineShipperStatusList = onlineShipperStatusList.Where(o => o.IsAvailable).ToList();
+                }
+
+                //filter by distance
+                if (startLatitude.HasValue && startLongitude.HasValue && searchDistanceInKm.HasValue)
+                {
+                    List<OnlineShipperStatus> shippersWithinDistance = new();
+                    foreach (var s in onlineShipperStatusList)
+                    {
+                        double distance = Math.Sqrt(
+                            Math.Pow(111.2 * (s.GeoLatitude - startLatitude.Value), 2) +
+                            Math.Pow(111.2 * (startLongitude.Value - s.GeoLongitude) * Math.Cos(s.GeoLatitude / 57.3), 2)
+                        );
+                        shippersWithinDistance.Add(s);
+                    }
+
+                    onlineShipperStatusList = new(shippersWithinDistance);
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

@@ -35,11 +35,30 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllOnlineCustomerLocations(
+            [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
+            [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
+            [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<OnlineCustomerLocation> onlineCustomerLocationList = await _dbOnlineCustomerLocation.GetAllAsync(null, pageSize, pageNumber);
+
+                //filter by distance
+                if (startLatitude.HasValue && startLongitude.HasValue && searchDistanceInKm.HasValue)
+                {
+                    List<OnlineCustomerLocation> customersWithinDistance = new();
+                    foreach (var c in onlineCustomerLocationList)
+                    {
+                        double distance = Math.Sqrt(
+                            Math.Pow(111.2 * (c.GeoLatitude - startLatitude.Value), 2) +
+                            Math.Pow(111.2 * (startLongitude.Value - c.GeoLongitude) * Math.Cos(c.GeoLatitude / 57.3), 2)
+                        );
+                        customersWithinDistance.Add(c);
+                    }
+
+                    onlineCustomerLocationList = new(customersWithinDistance);
+                }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
 

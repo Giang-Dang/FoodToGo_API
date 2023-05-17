@@ -32,8 +32,8 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllCustomers(
-            string? searchName,
-            string? searchAddress,
+            string? searchName = null,
+            string? searchAddress = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try

@@ -7,6 +7,7 @@ using FoodToGo_API.Models.DTO.UpdateDTO;
 using FoodToGo_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 
@@ -41,10 +42,11 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMerchants(
-            [FromQuery(Name = "OpenHoursCheckTime")] DateTime? openHoursCheckTime,
-            [FromQuery(Name = "SearchName")] string? searchName, 
-            [FromQuery(Name = "NearbyCheckGeoLatitude")] double? nearbyCheckGeoLatitude,
-            [FromQuery(Name = "NearbyCheckGeoLongtitude")] double? nearbyCheckGeoLongtitude,
+            [FromQuery(Name = "OpenHoursCheckTime")] DateTime? openHoursCheckTime = null,
+            [FromQuery(Name = "SearchName")] string? searchName = null, 
+            [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
+            [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
+            [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -60,6 +62,22 @@ namespace FoodToGo_API.Controllers
                 {
                     searchName = searchName.ToLower();
                     merchantList = merchantList.Where(m => m.Name.ToLower().Contains(searchName)).ToList();
+                }
+
+                //filter by distance
+                if (startLatitude.HasValue && startLongitude.HasValue && searchDistanceInKm.HasValue)
+                {
+                    List<Merchant> merchantsWithinDistance = new();
+                    foreach (var m in merchantList)
+                    {
+                        double distance = Math.Sqrt(
+                            Math.Pow(111.2 * (m.GeoLatitude - startLatitude.Value), 2) +
+                            Math.Pow(111.2 * (startLongitude.Value - m.GeoLongitude) * Math.Cos(m.GeoLatitude / 57.3), 2)
+                        );
+                        merchantsWithinDistance.Add(m);
+                    }
+
+                    merchantList = new(merchantsWithinDistance);
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

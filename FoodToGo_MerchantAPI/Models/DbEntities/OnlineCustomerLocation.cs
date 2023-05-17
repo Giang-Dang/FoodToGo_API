@@ -10,6 +10,6 @@ namespace FoodToGo_API.Models.DbEntities
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
         public double GeoLatitude { get; set; }
-        public double GeoLongtitude { get; set; }
+        public double GeoLongitude { get; set; }
     }
 }

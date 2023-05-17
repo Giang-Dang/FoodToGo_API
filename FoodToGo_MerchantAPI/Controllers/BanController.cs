@@ -35,7 +35,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllBans(
-            int? searchUserId,
+            int? searchUserId = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
