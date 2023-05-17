@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodToGo_API.Models.DbEntities
 {
-    [PrimaryKey("OrderId", "MenuItemId")]
     public class OrderDetail
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public int OrderId { get; set; }
         public virtual Order Order { get; set; }
 

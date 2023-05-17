@@ -12,50 +12,58 @@ using System.Text.Json;
 
 namespace FoodToGo_API.Controllers
 {
-    [Route("api/OnlineShiperStatusAPI")]
+    [Route("api/OverrideOpenHoursAPI")]
     [ApiController]
-    public class OnlineShiperStatusController : ControllerBase
+    public class OverrideOpenHoursController : ControllerBase
     {
         protected APIResponse _response;
-        private readonly IOnlineShipperStatusRepository _dbOnlineShipperStatus;
         private readonly IMapper _mapper;
-        public OnlineShiperStatusController(
-            IOnlineShipperStatusRepository dbOnlineShiperStatus,
+        private readonly IOverrideOpenHoursRepository _dbOverrideOpenHours;
+        public OverrideOpenHoursController(
+            IOverrideOpenHoursRepository dbOverrideOpenHours,
             IMapper mapper)
         {
             _mapper = mapper;
-            _dbOnlineShipperStatus = dbOnlineShiperStatus;
             this._response = new APIResponse();
+            _dbOverrideOpenHours = dbOverrideOpenHours;
         }
 
-        [HttpGet(Name = "GetAllOnlineShiperStatuses")]
+        [HttpGet(Name = "GetAllOverrideOpenHours")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetAllOnlineShiperStatuses(
-            bool? IsAvailable = null,
+        public async Task<ActionResult<APIResponse>> GetAllOverrideOpenHours(
+            int? searchMerchanId = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
-                List<OnlineShipperStatus> onlineShiperStatusList = await _dbOnlineShipperStatus.GetAllAsync(null, pageSize, pageNumber);
+                List<OverrideOpenHours> overrideOpenHoursList = await _dbOverrideOpenHours.GetAllAsync(null, pageSize, pageNumber);
 
-
-                if (IsAvailable.HasValue)
+                if (searchMerchanId.HasValue)
                 {
-                    onlineShiperStatusList = onlineShiperStatusList.Where(o => o.IsAvailable).ToList();
+                    if (searchMerchanId > 0)
+                    {
+                        overrideOpenHoursList = overrideOpenHoursList.Where(b => b.MerchantId == searchMerchanId).ToList();
+                    }
+                    else
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Invalid Merchant Id!");
+                        return BadRequest(_response);
+                    }
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
-
 
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = _mapper.Map<List<OnlineShipperStatus>>(onlineShiperStatusList);
+                _response.Result = _mapper.Map<List<OverrideOpenHours>>(overrideOpenHoursList);
 
                 return Ok(_response);
             }
@@ -68,7 +76,7 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetOnlineShipperStatus")]
+        [HttpGet("{id:int}", Name = "GetOverrideOpenHours")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -76,32 +84,32 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetOnlineShipperStatus(int id)
+        public async Task<ActionResult<APIResponse>> GetOverrideOpenHours(int id)
         {
             try
             {
-                if (id == 0)
+                if (id <= 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("ID cannot be 0.");
+                    _response.ErrorMessages.Add("Invalid OverrideOpenHours ID.");
                     return BadRequest(_response);
                 }
 
-                var onlineShipperStatus = await _dbOnlineShipperStatus.GetAsync(c => c.ShipperId == id);
-                if (onlineShipperStatus == null)
+                var overrideOpenHours = await _dbOverrideOpenHours.GetAsync(b => b.Id == id);
+                if (overrideOpenHours == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("OnlineShipperStatus is not found.");
+                    _response.ErrorMessages.Add("OverrideOpenHours is not found.");
                     return NotFound(_response);
                 }
 
-                var onlineShipperStatusDTO = _mapper.Map<OnlineShipperStatusDTO>(onlineShipperStatus);
+                var overrideOpenHoursDTO = _mapper.Map<OverrideOpenHoursDTO>(overrideOpenHours);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = onlineShipperStatusDTO;
+                _response.Result = overrideOpenHoursDTO;
 
                 return Ok(_response);
             }
@@ -115,13 +123,13 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorize("LoginFromApp", "Shipper", "Management")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> CreateOnlineShipperStatus([FromBody] OnlineShipperStatusCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateOverrideOpenHours([FromBody] OverrideOpenHoursCreateDTO createDTO)
         {
             try
             {
@@ -129,18 +137,18 @@ namespace FoodToGo_API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("The onlineShipperStatus entity cannot be null!");
+                    _response.ErrorMessages.Add("The overrideOpenHours entity cannot be null!");
                     return BadRequest(createDTO);
                 }
 
-                OnlineShipperStatus onlineShipperStatus = _mapper.Map<OnlineShipperStatus>(createDTO);
+                OverrideOpenHours overrideOpenHours = _mapper.Map<OverrideOpenHours>(createDTO);
 
-                await _dbOnlineShipperStatus.CreateAsync(onlineShipperStatus);
+                await _dbOverrideOpenHours.CreateAsync(overrideOpenHours);
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
                 _response.Result = createDTO;
-                return CreatedAtRoute("GetOnlineShipperStatus", new { id = onlineShipperStatus.ShipperId }, _response);
+                return CreatedAtRoute("GetOverrideOpenHours", new { id = overrideOpenHours.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -151,35 +159,35 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteOnlineShipperStatus")]
-        [CustomAuthorize("LoginFromApp", "Shipper", "Management")]
+        [HttpDelete("{id:int}", Name = "DeleteOverrideOpenHours")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> DeleteOnlineShipperStatus(int id)
+        public async Task<ActionResult<APIResponse>> DeleteOverrideOpenHours(int id)
         {
             try
             {
-                if (id == 0)
+                if (id <= 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("ID cannot be 0.");
+                    _response.ErrorMessages.Add("Invalid OverrideOpenHours ID.");
                     return BadRequest(_response);
                 }
 
-                var onlineShipperStatus = await _dbOnlineShipperStatus.GetAsync(m => m.ShipperId == id);
-                if (onlineShipperStatus == null)
+                var overrideOpenHours = await _dbOverrideOpenHours.GetAsync(m => m.Id == id);
+                if (overrideOpenHours == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("OnlineShipperStatus is not found!");
+                    _response.ErrorMessages.Add("OverrideOpenHours is not found!");
                     return NotFound(_response);
                 }
-                await _dbOnlineShipperStatus.RemoveAsync(onlineShipperStatus);
+                await _dbOverrideOpenHours.RemoveAsync(overrideOpenHours);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
@@ -194,18 +202,18 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpPut("{id:int}", Name = "UpdateOnlineShipperStatus")]
-        [CustomAuthorize("LoginFromApp", "Shipper", "Management")]
+        [HttpPut("{id:int}", Name = "UpdateOverrideOpenHours")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateOnlineShipperStatus(int id, [FromBody] OnlineShipperStatusUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateOverrideOpenHours(int id, [FromBody] OverrideOpenHoursUpdateDTO updateDTO)
         {
             try
             {
-                if (updateDTO == null || id != updateDTO.ShipperId)
+                if (updateDTO == null || id != updateDTO.Id)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -213,9 +221,9 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(updateDTO);
                 }
 
-                var onlineShipperStatus = _mapper.Map<OnlineShipperStatus>(updateDTO);
+                var overrideOpenHours = _mapper.Map<OverrideOpenHours>(updateDTO);
 
-                await _dbOnlineShipperStatus.UpdateAsync(onlineShipperStatus);
+                await _dbOverrideOpenHours.UpdateAsync(overrideOpenHours);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 return Ok(_response);

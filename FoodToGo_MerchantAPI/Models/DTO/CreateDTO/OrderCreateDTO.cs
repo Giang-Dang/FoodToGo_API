@@ -15,11 +15,11 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
         public decimal ShippingFee { get; set; }
         public decimal AppFee { get; set; }
         public decimal PromotionDiscount { get; set; }
-        public OrderStatus Status { get; set; }
+        public string Status { get; set; }
+        public string? CancellationReason { get; set; }
         public float ShipperRating { get; set; }
         public float CustomerRating { get; set; }
         public float MerchantRating { get; set; }
-        public List<OrderDetailCreateDTO> OrderDetails { get; set; }
 
     }
 }
