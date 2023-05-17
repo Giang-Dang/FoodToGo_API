@@ -74,7 +74,10 @@ namespace FoodToGo_API.Controllers
                             Math.Pow(111.2 * (m.GeoLatitude - startLatitude.Value), 2) +
                             Math.Pow(111.2 * (startLongitude.Value - m.GeoLongitude) * Math.Cos(m.GeoLatitude / 57.3), 2)
                         );
-                        merchantsWithinDistance.Add(m);
+                        if (distance <= searchDistanceInKm.Value)
+                        {
+                            merchantsWithinDistance.Add(m);
+                        }
                     }
 
                     merchantList = new(merchantsWithinDistance);

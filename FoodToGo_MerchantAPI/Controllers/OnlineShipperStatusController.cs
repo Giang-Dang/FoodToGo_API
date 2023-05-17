@@ -61,7 +61,10 @@ namespace FoodToGo_API.Controllers
                             Math.Pow(111.2 * (s.GeoLatitude - startLatitude.Value), 2) +
                             Math.Pow(111.2 * (startLongitude.Value - s.GeoLongitude) * Math.Cos(s.GeoLatitude / 57.3), 2)
                         );
-                        shippersWithinDistance.Add(s);
+                        if (distance <= searchDistanceInKm.Value)
+                        {
+                            shippersWithinDistance.Add(s);
+                        }
                     }
 
                     onlineShipperStatusList = new(shippersWithinDistance);
