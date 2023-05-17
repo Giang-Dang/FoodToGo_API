@@ -12,6 +12,8 @@ using System.Text.Json;
 
 namespace FoodToGo_API.Controllers
 {
+    [Route("api/PromotionAPI")]
+    [ApiController]
     public class PromotionController : ControllerBase
     {
         protected APIResponse _response;
