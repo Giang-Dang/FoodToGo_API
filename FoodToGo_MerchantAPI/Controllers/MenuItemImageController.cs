@@ -41,7 +41,6 @@ namespace FoodToGo_API.Controllers
             {
                 List<MenuItemImage> menuItemImageList = await _dbMenuItemImage.GetAllAsync(null, pageSize, pageNumber);
 
-
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
 
 

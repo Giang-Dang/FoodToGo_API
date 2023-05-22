@@ -24,6 +24,8 @@ namespace FoodToGo_API.Data
         public DbSet<NormalOpenHours> NormalOpenHours { get; set; }
         public DbSet<OverrideOpenHours> OverrideOpenHours { get; set; }
         public DbSet<Ban> Bans { get; set; }
+        public DbSet<MenuItemRating> MenuItemRatings { get; set; }
+        public DbSet<UserRating> UserRatings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

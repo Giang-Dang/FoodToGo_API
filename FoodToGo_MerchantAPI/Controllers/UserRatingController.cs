@@ -12,118 +12,55 @@ using System.Text.Json;
 
 namespace FoodToGo_API.Controllers
 {
-    [Route("api/OrderAPI")]
+    [Route("api/UserRatingAPI")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class UserRatingController : ControllerBase
     {
         protected APIResponse _response;
+        private readonly IUserRatingRepository _dbUserRating;
         private readonly IMapper _mapper;
-        private readonly IOrderRepository _dbOrder;
-        public OrderController(
-            IOrderRepository dbOrder,
+        public UserRatingController(
+            IUserRatingRepository dbUserRating,
             IMapper mapper)
         {
             _mapper = mapper;
+            _dbUserRating = dbUserRating;
             this._response = new APIResponse();
-            _dbOrder = dbOrder;
         }
 
-        [HttpGet(Name = "GetAllOrders")]
+        [HttpGet(Name = "GetAllUserRatings")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetAllOrders(
-            int? searchCustomerId = null,
-            int? searchMerchanId = null,
-            int? searchShipperId = null,
-            int? searchPromotionId = null,
-            DateTime? searchPlacedDate = null,
-            string? searchStatus = null,
+        public async Task<ActionResult<APIResponse>> GetAllUserRatings(
+            int fromUserId = 0,
+            int toUserId = 0,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
-                List<Order> orderList = await _dbOrder.GetAllAsync(null, pageSize, pageNumber);
+                List<UserRating> userRatingList = await _dbUserRating.GetAllAsync(null, pageSize, pageNumber);
 
-                if (searchCustomerId.HasValue)
+                if (fromUserId > 0)
                 {
-                    if (searchCustomerId > 0)
-                    {
-                        orderList = orderList.Where(e => e.CustomerId == searchCustomerId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Customer Id!");
-                        return BadRequest(_response);
-                    }
+                    userRatingList = userRatingList.Where(ur => ur.FromUserId == fromUserId).ToList();
                 }
 
-                if (searchMerchanId.HasValue)
+                if (toUserId > 0)
                 {
-                    if (searchMerchanId > 0)
-                    {
-                        orderList = orderList.Where(e => e.MerchanId == searchMerchanId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Merchant Id!");
-                        return BadRequest(_response);
-                    }
-                }
-
-                if (searchShipperId.HasValue)
-                {
-                    if (searchShipperId > 0)
-                    {
-                        orderList = orderList.Where(e => e.ShipperId == searchShipperId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Shipper Id!");
-                        return BadRequest(_response);
-                    }
-                }
-
-                if (searchPromotionId.HasValue)
-                {
-                    if (searchPromotionId > 0)
-                    {
-                        orderList = orderList.Where(e => e.PromotionId == searchPromotionId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Shipper Id!");
-                        return BadRequest(_response);
-                    }
-                }
-
-                if (searchPlacedDate.HasValue)
-                {
-                    orderList = orderList.Where(e => e.PlacedTime.Date == searchPlacedDate.Value.Date).ToList();
-                }
-
-                if (string.IsNullOrEmpty(searchStatus) == false)
-                {
-                    orderList = orderList.Where(e => e.Status == searchStatus).ToList();
+                    userRatingList = userRatingList.Where(ur => ur.ToUserId == toUserId).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
+
 
                 Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = _mapper.Map<List<Order>>(orderList);
+                _response.Result = _mapper.Map<List<UserRating>>(userRatingList);
 
                 return Ok(_response);
             }
@@ -136,7 +73,7 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetOrder")]
+        [HttpGet("{id:int}", Name = "GetUserRating")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -144,7 +81,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetOrder(int id)
+        public async Task<ActionResult<APIResponse>> GetUserRating(int id)
         {
             try
             {
@@ -152,24 +89,24 @@ namespace FoodToGo_API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Invalid Order ID.");
+                    _response.ErrorMessages.Add("Invalid MemuItemImage ID.");
                     return BadRequest(_response);
                 }
 
-                var order = await _dbOrder.GetAsync(b => b.Id == id);
-                if (order == null)
+                var userRating = await _dbUserRating.GetAsync(c => c.Id == id);
+                if (userRating == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Order is not found.");
+                    _response.ErrorMessages.Add("UserRating is not found.");
                     return NotFound(_response);
                 }
 
-                var orderDTO = _mapper.Map<OrderDTO>(order);
+                var userRatingDTO = _mapper.Map<UserRatingDTO>(userRating);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = orderDTO;
+                _response.Result = userRatingDTO;
 
                 return Ok(_response);
             }
@@ -189,7 +126,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<APIResponse>> CreateOrder([FromBody] OrderCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateUserRating([FromBody] UserRatingCreateDTO createDTO)
         {
             try
             {
@@ -197,18 +134,18 @@ namespace FoodToGo_API.Controllers
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("The order entity cannot be null!");
+                    _response.ErrorMessages.Add("The userRating entity cannot be null!");
                     return BadRequest(createDTO);
                 }
 
-                Order order = _mapper.Map<Order>(createDTO);
+                UserRating userRating = _mapper.Map<UserRating>(createDTO);
 
-                await _dbOrder.CreateAsync(order);
+                await _dbUserRating.CreateAsync(userRating);
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
                 _response.Result = createDTO;
-                return CreatedAtRoute("GetOrder", new { id = order.Id }, _response);
+                return CreatedAtRoute("GetUserRating", new { id = userRating.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -219,35 +156,35 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteOrder")]
-        [Authorize]
+        [HttpDelete("{id:int}", Name = "DeleteUserRating")]
+        [CustomAuthorize("LoginFromApp", "Customer", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> DeleteOrder(int id)
+        public async Task<ActionResult<APIResponse>> DeleteUserRating(int id)
         {
             try
             {
-                if (id <= 0)
+                if (id == 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Invalid Order ID.");
+                    _response.ErrorMessages.Add("ID cannot be 0.");
                     return BadRequest(_response);
                 }
 
-                var order = await _dbOrder.GetAsync(m => m.Id == id);
-                if (order == null)
+                var userRating = await _dbUserRating.GetAsync(m => m.Id == id);
+                if (userRating == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Order is not found!");
+                    _response.ErrorMessages.Add("UserRating is not found!");
                     return NotFound(_response);
                 }
-                await _dbOrder.RemoveAsync(order);
+                await _dbUserRating.RemoveAsync(userRating);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
@@ -262,14 +199,14 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpPut("{id:int}", Name = "UpdateOrder")]
-        [Authorize]
+        [HttpPut("{id:int}", Name = "UpdateUserRating")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> UpdateOrder(int id, [FromBody] OrderUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateUserRating(int id, [FromBody] UserRatingUpdateDTO updateDTO)
         {
             try
             {
@@ -281,9 +218,9 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(updateDTO);
                 }
 
-                var order = _mapper.Map<Order>(updateDTO);
+                var userRating = _mapper.Map<UserRating>(updateDTO);
 
-                await _dbOrder.UpdateAsync(order);
+                await _dbUserRating.UpdateAsync(userRating);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 return Ok(_response);

@@ -17,9 +17,6 @@ namespace FoodToGo_API.Models.DTO
         public decimal PromotionDiscount { get; set; }
         public string Status { get; set; }
         public string? CancellationReason { get; set; }
-        public float ShipperRating { get; set; }
-        public float CustomerRating { get; set; }
-        public float MerchantRating { get; set; }
 
     }
 }

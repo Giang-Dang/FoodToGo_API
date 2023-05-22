@@ -16,17 +16,21 @@ namespace FoodToGo_API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _dbUser;
+        private readonly IBanRepository _dbBan;
         private readonly IMapper _mapper;
         protected APIResponse _response;
-        public UserController(IUserRepository userRepo)
+        public UserController(IUserRepository dbUser, IMapper mapper, IBanRepository dbBan)
         {
-            _dbUser = userRepo;
+            _dbUser = dbUser;
+            _mapper = mapper;
+            _dbBan = dbBan;
             this._response = new APIResponse();            
         }
 
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
             var loginResponseDTO = await _dbUser.Login(loginRequestDTO);
@@ -37,6 +41,23 @@ namespace FoodToGo_API.Controllers
                 _response.ErrorMessages.Add(loginResponseDTO.ErrorMessage);
                 return BadRequest(_response);
             }
+
+            List<Ban> banList = new();
+            banList.AddRange(await _dbBan.GetAllAsync(e => e.UserId == loginResponseDTO.User.Id));
+            if (banList.Count > 0)
+            {
+                foreach (var ban in banList)
+                {
+                    if (ban.StartDate <= DateTime.Now && DateTime.Now <= ban.EndDate)
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add($"User {loginResponseDTO.User!.Username} has been banned from {ban.StartDate.ToShortDateString} to {ban.EndDate.ToShortDateString}.");
+                        return BadRequest(_response);
+                    }
+                }
+            }
+            
 
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;

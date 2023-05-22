@@ -65,6 +65,22 @@ namespace FoodToGo_API
             CreateMap<OverrideOpenHours, OverrideOpenHoursDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
             CreateMap<OverrideOpenHours, OverrideOpenHoursUpdateDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
             CreateMap<OverrideOpenHours, OverrideOpenHoursCreateDTO>().ReverseMap().ForMember(dest => dest.Merchant, opt => opt.Ignore());
+
+            CreateMap<MenuItemImage, MenuItemImageDTO>().ReverseMap();
+            CreateMap<MenuItemImage, MenuItemImageUpdateDTO>().ReverseMap();
+            CreateMap<MenuItemImage, MenuItemImageCreateDTO>().ReverseMap();
+
+            CreateMap<MenuItemRating, MenuItemRatingDTO>().ReverseMap();
+            CreateMap<MenuItemRating, MenuItemRatingUpdateDTO>().ReverseMap();
+            CreateMap<MenuItemRating, MenuItemRatingCreateDTO>().ReverseMap();
+
+            CreateMap<Ban, BanDTO>().ReverseMap();
+            CreateMap<Ban, BanUpdateDTO>().ReverseMap();
+            CreateMap<Ban, BanCreateDTO>().ReverseMap();
+
+            CreateMap<UserRating, UserRatingDTO>().ReverseMap();
+            CreateMap<UserRating, UserRatingUpdateDTO>().ReverseMap();
+            CreateMap<UserRating, UserRatingCreateDTO>().ReverseMap();
         }
     }
 }

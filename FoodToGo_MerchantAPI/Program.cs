@@ -33,6 +33,9 @@ builder.Services.AddScoped<IShipperRepository, ShipperRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOverrideOpenHoursRepository, OverrideOpenHoursRepository>();
 builder.Services.AddScoped<INormalOpenHoursRepository, NormalOpenHoursRepository>();
+builder.Services.AddScoped<IMenuItemRatingRepository, MenuItemRatingRepository>();
+builder.Services.AddScoped<IUserRatingRepository, UserRatingRepository>();
+builder.Services.AddScoped<IBanRepository, BanRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
