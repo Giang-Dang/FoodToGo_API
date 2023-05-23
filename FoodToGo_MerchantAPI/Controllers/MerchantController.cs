@@ -157,7 +157,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetMerchantByUserId(int id)
+        public async Task<ActionResult<APIResponse>> GetAllMerchantsByUserId(int id)
         {
             try
             {
@@ -169,9 +169,9 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(_response);
                 }
 
-                var merchant = await _dbMerchant.GetAsync(m => m.UserId == id);
+                var merchantList = await _dbMerchant.GetAllAsync(m => m.UserId == id);
 
-                if (merchant == null)
+                if (merchantList == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     _response.IsSuccess = false;
@@ -179,7 +179,7 @@ namespace FoodToGo_API.Controllers
                     return NotFound(_response);
                 }
 
-                var merchantDTO = _mapper.Map<MerchantDTO>(merchant);
+                var merchantDTO = _mapper.Map<List<MerchantDTO>>(merchantList);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
