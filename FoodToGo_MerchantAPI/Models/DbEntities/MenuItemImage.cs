@@ -13,8 +13,7 @@ namespace FoodToGo_API.Models.DbEntities
         [ForeignKey("MenuItemId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public virtual MenuItem MenuItem { get; set; }
-        public string FileName { get; set; }
-        public byte[] ImageFile { get; set; }
+        public string Path { get; set; }
 
     }
 }

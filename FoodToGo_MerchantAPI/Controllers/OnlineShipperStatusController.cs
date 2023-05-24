@@ -161,7 +161,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = onlineShipperStatus;
                 return CreatedAtRoute("GetOnlineShipperStatus", new { id = onlineShipperStatus.ShipperId }, _response);
             }
             catch (Exception ex)

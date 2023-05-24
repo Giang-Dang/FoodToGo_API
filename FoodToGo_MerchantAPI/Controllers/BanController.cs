@@ -194,7 +194,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = ban;
                 return CreatedAtRoute("GetBan", new { id = ban.BanId }, _response);
             }
             catch (Exception ex)

@@ -207,7 +207,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = order;
                 return CreatedAtRoute("GetOrder", new { id = order.Id }, _response);
             }
             catch (Exception ex)

@@ -172,13 +172,14 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(createDTO);
                 }
 
+
                 MenuItemImage menuItemImage = _mapper.Map<MenuItemImage>(createDTO);
 
                 await _dbMenuItemImage.CreateAsync(menuItemImage);
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = menuItemImage;
                 return CreatedAtRoute("GetMenuItemImage", new { id = menuItemImage.Id }, _response);
             }
             catch (Exception ex)

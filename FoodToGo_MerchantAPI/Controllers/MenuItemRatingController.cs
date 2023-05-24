@@ -179,7 +179,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = menuItemRating;
                 return CreatedAtRoute("GetMenuItemRating", new { id = menuItemRating.Id }, _response);
             }
             catch (Exception ex)

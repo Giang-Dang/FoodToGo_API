@@ -10,8 +10,7 @@ namespace FoodToGo_API.Models.DbEntities
         [ForeignKey("Merchant")]
         public int MerchantId { get; set; }
         public virtual Merchant Merchant { get; set; }
-        public string FileName { get; set; }
-        public byte[] ImageFile { get; set; }
+        public string Path { get; set; }
 
     }
 }

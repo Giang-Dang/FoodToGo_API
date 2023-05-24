@@ -6,8 +6,7 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
     {
         public int Id { get; set; }
         public int MenuItemId { get; set; }
-        public string FileName { get; set; }
-        public byte[] ImageFile { get; set; }
+        public string Path { get; set; }
 
     }
 }

@@ -7,6 +7,7 @@ using FoodToGo_API.Models.DTO.UpdateDTO;
 using FoodToGo_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
@@ -149,6 +150,52 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
+        //[HttpGet("idbyname/{name:String}", Name = "GetMerchantId")]
+        //[Authorize]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<ActionResult<APIResponse>> GetMerchantId(string name)
+        //{
+        //    try
+        //    {
+        //        if (name.IsNullOrEmpty())
+        //        {
+        //            _response.StatusCode = HttpStatusCode.BadRequest;
+        //            _response.IsSuccess = false;
+        //            _response.ErrorMessages.Add("Name cannot be null or empty.");
+        //            return BadRequest(_response);
+        //        }
+
+        //        var merchant = await _dbMerchant.GetAsync(m => m.Name == name);
+        //        if (merchant == null)
+        //        {
+        //            _response.StatusCode = HttpStatusCode.NotFound;
+        //            _response.IsSuccess = false;
+        //            _response.ErrorMessages.Add("Merchant is not found.");
+        //            return NotFound(_response);
+        //        }
+
+        //        var merchantDTO = _mapper.Map<MerchantDTO>(merchant);
+
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        _response.IsSuccess = true;
+        //        _response.Result = merchantDTO;
+
+        //        return Ok(_response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //    }
+
+        //    return _response;
+        //}
+
         [HttpGet("byuser/{id:int}", Name = "GetMerchantByUserId")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -228,7 +275,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = createDTO;
+                _response.Result = merchant;
                 return CreatedAtRoute("GetMerchant", new { id = merchant.MerchantId }, _response);
             }
             catch (Exception ex)

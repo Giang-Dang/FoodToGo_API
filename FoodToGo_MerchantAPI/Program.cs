@@ -19,9 +19,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
+builder.Services.AddResponseCaching();
+
+//set shared folder path to app root folder/UserData
+
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IMenuItemImageRepository, MenuItemImageRepository>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<IMenuItemTypeRepository, MenuItemTypeRepository>();
 builder.Services.AddScoped<IMerchantRepository, MerchantRepository>();
@@ -36,8 +40,15 @@ builder.Services.AddScoped<INormalOpenHoursRepository, NormalOpenHoursRepository
 builder.Services.AddScoped<IMenuItemRatingRepository, MenuItemRatingRepository>();
 builder.Services.AddScoped<IUserRatingRepository, UserRatingRepository>();
 builder.Services.AddScoped<IBanRepository, BanRepository>();
+builder.Services.AddScoped<IMenuItemImageRepository, MenuItemImageRepository>();
+builder.Services.AddScoped<IMerchantProfileImageRepository, MerchantProfileImageRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
+
+var env = builder.Environment;
+var sharedFolderPath = Path.Combine(env.ContentRootPath, "UserData");
+
+builder.Services.Configure<SharedFolderOptions>(options => options.Path = sharedFolderPath);
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:JWTSecret");
 builder.Services.AddAuthentication(x =>
@@ -92,6 +103,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
