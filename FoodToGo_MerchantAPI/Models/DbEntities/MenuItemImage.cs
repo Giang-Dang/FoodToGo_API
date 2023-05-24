@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodToGo_API.Models.DbEntities
@@ -7,10 +8,12 @@ namespace FoodToGo_API.Models.DbEntities
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("MenuItem")]
+        
         public int MenuItemId { get; set; }
+        [ForeignKey("MenuItemId")]
+        [DeleteBehavior(DeleteBehavior.NoAction)]
         public virtual MenuItem MenuItem { get; set; }
-        public string Name { get; set; }
+        public string FileName { get; set; }
         public byte[] ImageFile { get; set; }
 
     }
