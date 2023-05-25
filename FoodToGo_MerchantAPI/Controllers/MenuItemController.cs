@@ -11,6 +11,7 @@ using System.Data;
 using System.Net;
 using System.Text.Json;
 using System.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FoodToGo_API.Controllers
 {
@@ -165,9 +166,12 @@ namespace FoodToGo_API.Controllers
 
                 await _dbMenuItem.CreateAsync(menuItem);
 
+                MenuItemDTO menuItemDTO = _mapper.Map<MenuItemDTO>(menuItem);
+
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = menuItem;
+                _response.Result = menuItemDTO;
+
                 return CreatedAtRoute("GetMenuItem", new { id = menuItem.Id }, _response);
             }
             catch (Exception ex)
@@ -227,6 +231,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> UpdateMenuItem(int id, [FromBody] MenuItemUpdateDTO updateDTO)

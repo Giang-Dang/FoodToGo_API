@@ -27,6 +27,39 @@ namespace FoodToGo_API.Controllers
             this._response = new APIResponse();            
         }
 
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<UserDTO>> Get(int id)
+        {
+            if (id <= 0)
+            {
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Invalid Id");
+                return BadRequest(_response);
+            }
+
+            var user = await _dbUser.GetAsync(e => e.Id == id);
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            if (userDTO == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add($"Cannot find the user {id}");
+                return NotFound(_response);
+            }
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = userDTO;
+            return Ok(_response);
+        }
+
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -102,16 +135,16 @@ namespace FoodToGo_API.Controllers
             _response.ErrorMessages.Clear();
             return Ok(_response);
         }
-        [HttpPut("{id:int}", Name = "UpdateUserInfo")]
+        [HttpPut("{id:int}", Name = "Update")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateInfo(int id, [FromBody]UserUpdateInfoDTO updateInfoDTO)
+        public async Task<IActionResult> Update(int id, [FromBody]UserUpdateDTO updateDTO)
         {
             try
             {
-                if (updateInfoDTO == null || id != updateInfoDTO.Id)
+                if (updateDTO == null || id != updateDTO.Id)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -121,14 +154,14 @@ namespace FoodToGo_API.Controllers
 
                 var user = await _dbUser.GetAsync(u => u.Id == id);
 
-                user.PhoneNumber = updateInfoDTO.PhoneNumber;
-                user.Email = updateInfoDTO.Email;
+                user.PhoneNumber = updateDTO.PhoneNumber;
+                user.Email = updateDTO.Email;
 
                 await _dbUser.UpdateAsync(user);
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = updateInfoDTO;
+                _response.Result = updateDTO;
                 return Ok(_response);
             }
             catch (Exception ex)

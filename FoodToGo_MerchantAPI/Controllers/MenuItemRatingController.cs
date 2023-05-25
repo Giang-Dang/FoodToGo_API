@@ -154,6 +154,58 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
+        [HttpGet("avgrating/{id:int}", Name = "GetAvgRatingByItemId")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetAvgRatingByItemId(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Invalid MemuItem ID.");
+                    return BadRequest(_response);
+                }
+
+                var menuItemRatingList = await _dbMenuItemRating.GetAllAsync(c => c.MenuItemId == id);
+                if (menuItemRatingList == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("MenuItemRating is not found.");
+                    return NotFound(_response);
+                }
+
+                double totalRating = 0;
+                foreach ( var r in menuItemRatingList)
+                {
+                    totalRating += r.Rating;
+                }
+
+                double avgRating = totalRating/menuItemRatingList.Count;
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = avgRating;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
         [HttpPost]
         [CustomAuthorize("LoginFromApp", "User", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -11,10 +11,8 @@ namespace FoodToGo_API
         public AutoMapperConfig()
         {
             CreateMap<User, UserDTO>().ReverseMap();
-            CreateMap<User, UserUpdateInfoDTO>().ReverseMap();
+            CreateMap<User, UserUpdateDTO>().ReverseMap();
             CreateMap<User, UserCreateDTO>().ReverseMap();
-
-            CreateMap<UserDTO, UserUpdateResponseDTO>().ReverseMap();
 
             CreateMap<User, RegisterationRequestDTO>().ReverseMap();
 

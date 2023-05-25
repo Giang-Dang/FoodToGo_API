@@ -2,7 +2,7 @@
 
 namespace FoodToGo_API.Models.DTO.UpdateDTO
 {
-    public class UserUpdateInfoDTO
+    public class UserUpdateDTO
     {
         public int Id { get; set; }
         public string PhoneNumber { get; set; }

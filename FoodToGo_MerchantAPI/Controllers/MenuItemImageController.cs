@@ -109,6 +109,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("bymenuitem/{id:int}", Name = "GetMenuItemImageByItemId")]
         [Authorize]
+        [ResponseCache(Duration = 30)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -172,6 +173,7 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(createDTO);
                 }
 
+                createDTO.Id = 0;
 
                 MenuItemImage menuItemImage = _mapper.Map<MenuItemImage>(createDTO);
 
