@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
+using FoodToGo_API.Models.Enums;
 
 namespace FoodToGo_API.Controllers
 {
@@ -39,8 +40,8 @@ namespace FoodToGo_API.Controllers
             int? searchMerchanId = null,
             int? searchShipperId = null,
             int? searchPromotionId = null,
-            DateTime? searchPlacedDate = null,
             string? searchStatus = null,
+            DateTime? searchPlacedDate = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -66,7 +67,7 @@ namespace FoodToGo_API.Controllers
                 {
                     if (searchMerchanId > 0)
                     {
-                        orderList = orderList.Where(e => e.MerchanId == searchMerchanId).ToList();
+                        orderList = orderList.Where(e => e.MerchantId == searchMerchanId).ToList();
                     }
                     else
                     {
@@ -170,6 +171,89 @@ namespace FoodToGo_API.Controllers
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = orderDTO;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpGet("successrate", Name = "GetSuccessRate")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetSuccessRate(int userId, string asType)
+        {
+            try
+            {
+                asType = char.ToUpper(asType[0]) + asType.Substring(1);
+                if (userId <= 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Invalid user ID.");
+                    return BadRequest(_response);
+                }
+
+                if (!Enum.IsDefined(typeof(UserType), asType))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Invalid asType.");
+                    return BadRequest(_response);
+                }
+                
+                List<Order> ordersList = new List<Order>();
+                if (asType == UserType.Shipper.ToString())
+                {
+                    ordersList = await _dbOrder.GetAllAsync(b => b.ShipperId == userId);
+                }
+                else if (asType == UserType.Customer.ToString())
+                {
+                    ordersList = await _dbOrder.GetAllAsync(b => b.CustomerId == userId);
+                }
+                else if (asType == UserType.Merchant.ToString())
+                {
+                    ordersList = await _dbOrder.GetAllAsync(b => b.MerchantId == userId);
+                }
+
+                if (ordersList == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("ordersList is null.");
+                    return NotFound(_response);
+                }
+
+                int successCount = 0;
+                int cancelledCount = 0;
+                ordersList.ForEach(o => { 
+                    if(o.Status == OrderStatus.Completed.ToString())
+                    {
+                        successCount++;
+                    }
+                    if(o.Status == OrderStatus.Cancelled.ToString() && o.canceledBy == asType)
+                    {
+                        cancelledCount++;
+                    }
+                });
+
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = new { 
+                    success = successCount,
+                    cancelled = cancelledCount,
+                };
 
                 return Ok(_response);
             }

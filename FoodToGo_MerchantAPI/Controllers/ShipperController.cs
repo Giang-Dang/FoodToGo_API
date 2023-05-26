@@ -167,9 +167,11 @@ namespace FoodToGo_API.Controllers
 
                 await _dbShipper.CreateAsync(shipper);
 
+                ShipperDTO shipperDTO = _mapper.Map<ShipperDTO>(shipper);
+
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = shipper;
+                _response.Result = shipperDTO;
                 return CreatedAtRoute("GetShipper", new { id = shipper.UserId }, _response);
             }
             catch (Exception ex)

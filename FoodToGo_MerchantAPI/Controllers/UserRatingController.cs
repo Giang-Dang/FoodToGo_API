@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
+using FoodToGo_API.Models.Enums;
+using Newtonsoft.Json.Linq;
+using System.Diagnostics.Eventing.Reader;
 
 namespace FoodToGo_API.Controllers
 {
@@ -73,7 +77,7 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetUserRating")]
+        [HttpGet("avgrating", Name = "GetAvgUserRating")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -81,11 +85,21 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetUserRating(int id)
+        public async Task<ActionResult<APIResponse>> GetAvgUserRating(int toUserId, string asType)
         {
             try
             {
-                if (id <= 0)
+                asType = char.ToUpper(asType[0]) + asType.Substring(1);
+
+                if (!Enum.IsDefined(typeof(UserType), asType))
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("Invalid asType.");
+                    return BadRequest(_response);
+                }
+
+                if (toUserId <= 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
@@ -93,20 +107,28 @@ namespace FoodToGo_API.Controllers
                     return BadRequest(_response);
                 }
 
-                var userRating = await _dbUserRating.GetAsync(c => c.Id == id);
-                if (userRating == null)
+                var userRatingList = await _dbUserRating.GetAllAsync(c => c.ToUserId == toUserId);
+
+                if (userRatingList.IsNullOrEmpty())
                 {
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("UserRating is not found.");
-                    return NotFound(_response);
+                    _response.StatusCode = HttpStatusCode.OK;
+                    _response.IsSuccess = true;
+                    _response.Result = 0;
+                    return Ok(_response);
                 }
 
-                var userRatingDTO = _mapper.Map<UserRatingDTO>(userRating);
+                double sum = 0;
+
+                foreach (var rating in userRatingList)
+                {
+                    sum += rating.Rating;
+                }
+
+                double avgRating = sum / userRatingList.Count;
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = userRatingDTO;
+                _response.Result = avgRating;
 
                 return Ok(_response);
             }
@@ -142,10 +164,12 @@ namespace FoodToGo_API.Controllers
 
                 await _dbUserRating.CreateAsync(userRating);
 
+                UserRatingDTO userRatingDTO = _mapper.Map<UserRatingDTO>(userRating);
+
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
-                _response.Result = userRating;
-                return CreatedAtRoute("GetUserRating", new { id = userRating.Id }, _response);
+                _response.Result = userRatingDTO;
+                return CreatedAtRoute("GetAvgUserRating", new { id = userRating.Id , asType = userRating.ToUserType }, _response);
             }
             catch (Exception ex)
             {

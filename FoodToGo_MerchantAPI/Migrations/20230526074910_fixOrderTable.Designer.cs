@@ -4,6 +4,7 @@ using FoodToGo_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodToGo_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230526074910_fixOrderTable")]
+    partial class fixOrderTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -318,7 +321,7 @@ namespace FoodToGo_API.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeliveryCompletionTime")
+                    b.Property<DateTime>("DeliveryCompletionTime")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ETA")
@@ -336,7 +339,7 @@ namespace FoodToGo_API.Migrations
                     b.Property<decimal>("PromotionDiscount")
                         .HasColumnType("money");
 
-                    b.Property<int?>("PromotionId")
+                    b.Property<int>("PromotionId")
                         .HasColumnType("int");
 
                     b.Property<int>("ShipperId")
@@ -347,9 +350,6 @@ namespace FoodToGo_API.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("canceledBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -727,7 +727,9 @@ namespace FoodToGo_API.Migrations
 
                     b.HasOne("FoodToGo_API.Models.DbEntities.Promotion", "Promotion")
                         .WithMany()
-                        .HasForeignKey("PromotionId");
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FoodToGo_API.Models.DbEntities.Shipper", "Shipper")
                         .WithMany()

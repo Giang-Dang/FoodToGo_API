@@ -16,6 +16,7 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
         public decimal AppFee { get; set; }
         public decimal PromotionDiscount { get; set; }
         public string Status { get; set; }
+        public string? canceledBy { get; set; }
         public string? CancellationReason { get; set; }
 
     }
