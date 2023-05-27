@@ -18,7 +18,7 @@ namespace FoodToGo_API.Models.DbEntities
         public virtual MenuItem MenuItem { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public string SpecialInstruction { get; set; }
+        public string? SpecialInstruction { get; set; }
 
     }
 }

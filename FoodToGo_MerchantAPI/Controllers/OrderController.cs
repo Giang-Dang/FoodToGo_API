@@ -36,10 +36,10 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllOrders(
-            int? searchCustomerId = null,
-            int? searchMerchanId = null,
-            int? searchShipperId = null,
-            int? searchPromotionId = null,
+            int? searchCustomerId,
+            int? searchMerchantId,
+            int? searchShipperId,
+            int? searchPromotionId,
             string? searchStatus = null,
             DateTime? searchPlacedDate = null,
             int pageSize = 0, int pageNumber = 1)
@@ -54,27 +54,13 @@ namespace FoodToGo_API.Controllers
                     {
                         orderList = orderList.Where(e => e.CustomerId == searchCustomerId).ToList();
                     }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Customer Id!");
-                        return BadRequest(_response);
-                    }
                 }
 
-                if (searchMerchanId.HasValue)
+                if (searchMerchantId.HasValue)
                 {
-                    if (searchMerchanId > 0)
+                    if (searchMerchantId > 0)
                     {
-                        orderList = orderList.Where(e => e.MerchantId == searchMerchanId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Merchant Id!");
-                        return BadRequest(_response);
+                        orderList = orderList.Where(e => e.MerchantId == searchMerchantId).ToList();
                     }
                 }
 
@@ -84,13 +70,6 @@ namespace FoodToGo_API.Controllers
                     {
                         orderList = orderList.Where(e => e.ShipperId == searchShipperId).ToList();
                     }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Shipper Id!");
-                        return BadRequest(_response);
-                    }
                 }
 
                 if (searchPromotionId.HasValue)
@@ -98,13 +77,6 @@ namespace FoodToGo_API.Controllers
                     if (searchPromotionId > 0)
                     {
                         orderList = orderList.Where(e => e.PromotionId == searchPromotionId).ToList();
-                    }
-                    else
-                    {
-                        _response.StatusCode = HttpStatusCode.BadRequest;
-                        _response.IsSuccess = false;
-                        _response.ErrorMessages.Add("Invalid Shipper Id!");
-                        return BadRequest(_response);
                     }
                 }
 
@@ -250,9 +222,9 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = new { 
-                    success = successCount,
-                    cancelled = cancelledCount,
+                _response.Result = new {
+                    successOrderCount = successCount,
+                    cancelledOrderCount = cancelledCount,
                 };
 
                 return Ok(_response);

@@ -4,7 +4,9 @@
     {
         Placed,
         Getting,
+        DriverAtMerchant,
         Delivering,
+        DriverAtDeliveryPoint,
         Completed,
         Cancelled
     }

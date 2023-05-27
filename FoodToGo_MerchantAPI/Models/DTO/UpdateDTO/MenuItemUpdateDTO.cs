@@ -9,5 +9,6 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
+        public bool IsClosed { get; set; }
     }
 }

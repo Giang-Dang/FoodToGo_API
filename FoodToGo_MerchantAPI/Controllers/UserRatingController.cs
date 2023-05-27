@@ -40,7 +40,9 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllUserRatings(
             int fromUserId = 0,
+            string? fromUserType = "",
             int toUserId = 0,
+            string? toUserType = "",
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -52,9 +54,25 @@ namespace FoodToGo_API.Controllers
                     userRatingList = userRatingList.Where(ur => ur.FromUserId == fromUserId).ToList();
                 }
 
+                if (fromUserType.IsNullOrEmpty()) 
+                { 
+                    if(Enum.IsDefined(typeof(UserType), fromUserType) )
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.FromUserType == fromUserType).ToList();
+                    }
+                }
+
                 if (toUserId > 0)
                 {
                     userRatingList = userRatingList.Where(ur => ur.ToUserId == toUserId).ToList();
+                }
+
+                if (toUserType.IsNullOrEmpty())
+                {
+                    if (Enum.IsDefined(typeof(UserType), toUserType))
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.ToUserType == toUserType).ToList();
+                    }
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
