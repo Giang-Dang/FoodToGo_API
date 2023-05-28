@@ -27,6 +27,7 @@ namespace FoodToGo_API.Data
         public DbSet<MenuItemRating> MenuItemRatings { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
         public DbSet<MerchantProfileImage> MerchantProfileImages { get; set; }
+        public DbSet<MerchantRating> MerchantRatings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -83,6 +83,10 @@ namespace FoodToGo_API
             CreateMap<MerchantProfileImage, MerchantProfileImageDTO>().ReverseMap();
             CreateMap<MerchantProfileImage, MerchantProfileImageUpdateDTO>().ReverseMap();
             CreateMap<MerchantProfileImage, MerchantProfileImageCreateDTO>().ReverseMap();
+
+            CreateMap<MerchantRating, MerchantRatingDTO>().ReverseMap();
+            CreateMap<MerchantRating, MerchantRatingUpdateDTO>().ReverseMap();
+            CreateMap<MerchantRating, MerchantRatingCreateDTO>().ReverseMap();
         }
     }
 }

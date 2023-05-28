@@ -42,6 +42,7 @@ builder.Services.AddScoped<IUserRatingRepository, UserRatingRepository>();
 builder.Services.AddScoped<IBanRepository, BanRepository>();
 builder.Services.AddScoped<IMenuItemImageRepository, MenuItemImageRepository>();
 builder.Services.AddScoped<IMerchantProfileImageRepository, MerchantProfileImageRepository>();
+builder.Services.AddScoped<IMerchantRatingRepository, MerchantRatingRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 

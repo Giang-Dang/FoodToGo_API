@@ -4,6 +4,7 @@ using FoodToGo_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodToGo_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230528011110_addDescriptionToPromotionTable")]
+    partial class addDescriptionToPromotionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,36 +242,6 @@ namespace FoodToGo_API.Migrations
                     b.ToTable("MerchantProfileImages");
                 });
 
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MerchantRating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FromUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FromUserType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ToMerchantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FromUserId");
-
-                    b.HasIndex("ToMerchantId");
-
-                    b.ToTable("MerchantRatings");
-                });
-
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.NormalOpenHours", b =>
                 {
                     b.Property<int>("Id")
@@ -476,6 +449,10 @@ namespace FoodToGo_API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -708,25 +685,6 @@ namespace FoodToGo_API.Migrations
                         .IsRequired();
 
                     b.Navigation("Merchant");
-                });
-
-            modelBuilder.Entity("FoodToGo_API.Models.DbEntities.MerchantRating", b =>
-                {
-                    b.HasOne("FoodToGo_API.Models.DbEntities.User", "FromUser")
-                        .WithMany()
-                        .HasForeignKey("FromUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("FoodToGo_API.Models.DbEntities.Merchant", "ToMerchant")
-                        .WithMany()
-                        .HasForeignKey("ToMerchantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("FromUser");
-
-                    b.Navigation("ToMerchant");
                 });
 
             modelBuilder.Entity("FoodToGo_API.Models.DbEntities.NormalOpenHours", b =>
