@@ -33,7 +33,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMenuItems")]
         [Authorize]
-        [ResponseCache(Duration = 30)]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,7 +98,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetMenuItem")]
         [Authorize]
-        [ResponseCache(Duration = 30)]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

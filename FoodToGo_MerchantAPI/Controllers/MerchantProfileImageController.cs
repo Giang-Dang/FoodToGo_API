@@ -30,6 +30,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMerchantProfileImages")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -63,6 +64,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetMerchantProfileImage")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -109,6 +111,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("bymerchant/{id:int}", Name = "GetMerchantProfileImageByMerchantId")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -30,12 +30,17 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllNormalOpenHours")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllNormalOpenHours(
             int? searchMerchanId = null,
+            int? searchDayOfWeek = null,
+            int? searchSessionNo = null,
+            DateTime? searchOpenTime = null,
+            DateTime? searchCloseTime = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -53,6 +58,36 @@ namespace FoodToGo_API.Controllers
                         _response.StatusCode = HttpStatusCode.BadRequest;
                         _response.IsSuccess = false;
                         _response.ErrorMessages.Add("Invalid Merchant Id!");
+                        return BadRequest(_response);
+                    }
+                }
+
+                if (searchDayOfWeek.HasValue)
+                {
+                    if (searchDayOfWeek > 0)
+                    {
+                        normalOpenHoursList = normalOpenHoursList.Where(b => b.DayOfWeek == searchDayOfWeek).ToList();
+                    }
+                    else
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Invalid searchDayOfWeek!");
+                        return BadRequest(_response);
+                    }
+                }
+
+                if (searchSessionNo.HasValue)
+                {
+                    if (searchSessionNo > 0)
+                    {
+                        normalOpenHoursList = normalOpenHoursList.Where(b => b.SessionNo == searchSessionNo).ToList();
+                    }
+                    else
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Invalid searchSessionNo!");
                         return BadRequest(_response);
                     }
                 }
@@ -78,6 +113,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetNormalOpenHours")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

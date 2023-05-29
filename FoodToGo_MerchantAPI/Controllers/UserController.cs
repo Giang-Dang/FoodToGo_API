@@ -29,6 +29,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]

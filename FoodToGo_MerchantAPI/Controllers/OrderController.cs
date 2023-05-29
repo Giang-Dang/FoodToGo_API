@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 using FoodToGo_API.Models.Enums;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FoodToGo_API.Controllers
 {
@@ -31,6 +32,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllOrders")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -87,6 +89,7 @@ namespace FoodToGo_API.Controllers
 
                 if (string.IsNullOrEmpty(searchStatus) == false)
                 {
+                    searchStatus = searchStatus.ToLower();
                     orderList = orderList.Where(e => e.Status == searchStatus).ToList();
                 }
 
@@ -111,6 +114,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetOrder")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -157,6 +161,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("successrate", Name = "GetSuccessRate")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -209,11 +214,11 @@ namespace FoodToGo_API.Controllers
                 int successCount = 0;
                 int cancelledCount = 0;
                 ordersList.ForEach(o => { 
-                    if(o.Status == OrderStatus.Completed.ToString())
+                    if(o.Status == OrderStatus.Completed.ToString().ToLower())
                     {
                         successCount++;
                     }
-                    if(o.Status == OrderStatus.Cancelled.ToString() && o.canceledBy == asType)
+                    if(o.Status == OrderStatus.Cancelled.ToString().ToLower() && o.canceledBy == asType)
                     {
                         cancelledCount++;
                     }
@@ -256,6 +261,8 @@ namespace FoodToGo_API.Controllers
                     _response.ErrorMessages.Add("The order entity cannot be null!");
                     return BadRequest(createDTO);
                 }
+
+                createDTO.Status = createDTO.Status.ToLower();
 
                 Order order = _mapper.Map<Order>(createDTO);
 
@@ -336,6 +343,8 @@ namespace FoodToGo_API.Controllers
                     _response.ErrorMessages.Add("Bad Request!");
                     return BadRequest(updateDTO);
                 }
+
+                updateDTO.Status = updateDTO.Status.ToLower();
 
                 var order = _mapper.Map<Order>(updateDTO);
 

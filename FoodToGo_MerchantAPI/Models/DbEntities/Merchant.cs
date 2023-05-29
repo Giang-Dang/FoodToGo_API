@@ -18,5 +18,6 @@ namespace FoodToGo_API.Models.DbEntities
         public double GeoLongitude { get; set; }
         public List<NormalOpenHours> NormalOpenHoursList { get; set; }
         public List<OverrideOpenHours> OverrideOpenHoursList { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

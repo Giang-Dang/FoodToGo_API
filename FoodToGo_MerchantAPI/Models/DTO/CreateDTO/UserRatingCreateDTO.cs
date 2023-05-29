@@ -7,6 +7,7 @@
         public string FromUserType { get; set; }
         public int ToUserId { get; set; }
         public string ToUserType { get; set; }
+        public int OrderId { get; set; }
         public double Rating { get; set; }
     }
 }

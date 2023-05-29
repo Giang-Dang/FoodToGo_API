@@ -31,6 +31,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllOrderDetails")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -80,7 +81,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = _mapper.Map<List<OrderDetail>>(orderDetailList);
+                _response.Result = _mapper.Map<List<OrderDetailDTO>>(orderDetailList);
 
                 return Ok(_response);
             }
@@ -95,6 +96,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetOrderDetail")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

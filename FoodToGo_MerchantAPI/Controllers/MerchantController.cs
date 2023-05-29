@@ -38,6 +38,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMerchants")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,6 +49,7 @@ namespace FoodToGo_API.Controllers
             [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
             [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
             [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
+            bool? isDeleted = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -63,6 +65,11 @@ namespace FoodToGo_API.Controllers
                 {
                     searchName = searchName.ToLower();
                     merchantList = merchantList.Where(m => m.Name.ToLower().Contains(searchName)).ToList();
+                }
+
+                if (isDeleted.HasValue)
+                {
+                    merchantList = merchantList.Where(m => m.IsDeleted == isDeleted).ToList();
                 }
 
                 //filter by distance
@@ -106,6 +113,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetMerchant")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -198,6 +206,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("byuser/{id:int}", Name = "GetMerchantByUserId")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

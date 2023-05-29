@@ -18,6 +18,10 @@ namespace FoodToGo_API.Models.DbEntities
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public Customer Customer { get; set; }
         public double Rating { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public int OrderId { get; set; }
+        [ForeignKey("OrderId")]
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public Order Order { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

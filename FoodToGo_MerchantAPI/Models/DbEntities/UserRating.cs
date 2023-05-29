@@ -20,5 +20,9 @@ namespace FoodToGo_API.Models.DbEntities
         public virtual User ToUser { get; set; }
         public string ToUserType { get; set; }
         public double Rating { get; set; }
+        public int OrderId { get; set; }
+        [ForeignKey("OrderId")]
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public Order Order { get; set; }
     }
 }

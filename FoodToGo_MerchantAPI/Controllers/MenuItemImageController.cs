@@ -30,6 +30,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMenuItemImages")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -63,6 +64,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetMenuItemImage")]
         [Authorize]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -109,7 +111,7 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("bymenuitem/{id:int}", Name = "GetMenuItemImageByItemId")]
         [Authorize]
-        [ResponseCache(Duration = 30)]
+        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

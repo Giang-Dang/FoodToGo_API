@@ -18,6 +18,10 @@ namespace FoodToGo_API.Models.DbEntities
         [ForeignKey("ToMerchantId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public virtual Merchant ToMerchant { get; set; }
+        public int OrderId { get; set; }
+        [ForeignKey("OrderId")]
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public Order Order { get; set; }
         public double Rating { get; set; }
     }
 }

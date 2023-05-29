@@ -93,19 +93,10 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetAvgMerchantRating(int toMerchantId, string asType)
+        public async Task<ActionResult<APIResponse>> GetAvgMerchantRating(int toMerchantId)
         {
             try
             {
-                asType = char.ToUpper(asType[0]) + asType.Substring(1);
-
-                if (!Enum.IsDefined(typeof(UserType), asType))
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add("Invalid asType.");
-                    return BadRequest(_response);
-                }
 
                 if (toMerchantId <= 0)
                 {

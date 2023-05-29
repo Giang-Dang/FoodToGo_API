@@ -115,6 +115,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseResponseCaching();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
