@@ -33,7 +33,7 @@ namespace FoodToGo_API.Models.DbEntities
         public decimal AppFee { get; set; }
         public decimal PromotionDiscount { get; set; }
         public string Status { get; set; }
-        public string? canceledBy { get; set; }
+        public string? cancelledBy { get; set; }
         public string? CancellationReason { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
 

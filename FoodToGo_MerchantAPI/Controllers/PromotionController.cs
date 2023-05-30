@@ -36,18 +36,18 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllPromotions(
-            int? searchMerchanId = null,
+            int? searchMerchantId = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<Promotion> promotionList = await _dbPromotion.GetAllAsync(null, pageSize, pageNumber);
 
-                if (searchMerchanId.HasValue)
+                if (searchMerchantId.HasValue)
                 {
-                    if (searchMerchanId > 0)
+                    if (searchMerchantId > 0)
                     {
-                        promotionList = promotionList.Where(e => e.DiscountCreatorMerchanId == searchMerchanId).ToList();
+                        promotionList = promotionList.Where(e => e.DiscountCreatorMerchantId == searchMerchantId).ToList();
                     }
                     else
                     {

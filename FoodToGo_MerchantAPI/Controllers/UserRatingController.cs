@@ -40,19 +40,23 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllUserRatings(
-            int fromUserId = 0,
-            string? fromUserType = "",
-            int toUserId = 0,
-            string? toUserType = "",
+            int? fromUserId,
+            string? fromUserType,
+            int? toUserId,
+            string? toUserType,
+            int? orderId,
+            double? rating,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<UserRating> userRatingList = await _dbUserRating.GetAllAsync(null, pageSize, pageNumber);
 
-                if (fromUserId > 0)
-                {
-                    userRatingList = userRatingList.Where(ur => ur.FromUserId == fromUserId).ToList();
+                if (fromUserId.HasValue) { 
+                    if (fromUserId > 0)
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.FromUserId == fromUserId).ToList();
+                    }
                 }
 
                 if (fromUserType.IsNullOrEmpty()) 
@@ -63,9 +67,12 @@ namespace FoodToGo_API.Controllers
                     }
                 }
 
-                if (toUserId > 0)
+                if (toUserId.HasValue)
                 {
-                    userRatingList = userRatingList.Where(ur => ur.ToUserId == toUserId).ToList();
+                    if (toUserId > 0)
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.ToUserId == toUserId).ToList();
+                    }
                 }
 
                 if (toUserType.IsNullOrEmpty())
@@ -73,6 +80,22 @@ namespace FoodToGo_API.Controllers
                     if (Enum.IsDefined(typeof(UserType), toUserType))
                     {
                         userRatingList = userRatingList.Where(ur => ur.ToUserType == toUserType).ToList();
+                    }
+                }
+
+                if(orderId.HasValue)
+                {
+                    if(orderId > 0)
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.OrderId == orderId).ToList();
+                    }
+                }
+
+                if(rating.HasValue)
+                {
+                    if (rating > 0)
+                    {
+                        userRatingList = userRatingList.Where(ur => ur.Rating == rating).ToList();
                     }
                 }
 
@@ -162,7 +185,7 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorize("LoginFromApp", "Customer", "Management")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

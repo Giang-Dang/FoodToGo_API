@@ -36,24 +36,56 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllOverrideOpenHours(
-            int? searchMerchanId = null,
+            int? searchMerchantId = null,
+            int? searchDayOfWeek = null,
+            int? searchSessionNo = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<OverrideOpenHours> overrideOpenHoursList = await _dbOverrideOpenHours.GetAllAsync(null, pageSize, pageNumber);
 
-                if (searchMerchanId.HasValue)
+                if (searchMerchantId.HasValue)
                 {
-                    if (searchMerchanId > 0)
+                    if (searchMerchantId > 0)
                     {
-                        overrideOpenHoursList = overrideOpenHoursList.Where(b => b.MerchantId == searchMerchanId).ToList();
+                        overrideOpenHoursList = overrideOpenHoursList.Where(b => b.MerchantId == searchMerchantId).ToList();
                     }
                     else
                     {
                         _response.StatusCode = HttpStatusCode.BadRequest;
                         _response.IsSuccess = false;
                         _response.ErrorMessages.Add("Invalid Merchant Id!");
+                        return BadRequest(_response);
+                    }
+                }
+
+                if (searchDayOfWeek.HasValue)
+                {
+                    if (searchDayOfWeek > 0)
+                    {
+                        overrideOpenHoursList = overrideOpenHoursList.Where(b => b.DayOfWeek == searchDayOfWeek).ToList();
+                    }
+                    else
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Invalid searchDayOfWeek!");
+                        return BadRequest(_response);
+                    }
+                }
+
+                if (searchSessionNo.HasValue)
+                {
+                    if (searchSessionNo > 0)
+                    {
+                        overrideOpenHoursList = overrideOpenHoursList.Where(b => b.SessionNo == searchSessionNo).ToList();
+                    }
+                    else
+                    {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
+                        _response.ErrorMessages.Add("Invalid searchSessionNo!");
                         return BadRequest(_response);
                     }
                 }

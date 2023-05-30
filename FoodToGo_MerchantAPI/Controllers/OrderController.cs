@@ -99,7 +99,7 @@ namespace FoodToGo_API.Controllers
 
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
-                _response.Result = _mapper.Map<List<Order>>(orderList);
+                _response.Result = _mapper.Map<List<OrderDTO>>(orderList);
 
                 return Ok(_response);
             }
@@ -218,7 +218,7 @@ namespace FoodToGo_API.Controllers
                     {
                         successCount++;
                     }
-                    if(o.Status == OrderStatus.Cancelled.ToString().ToLower() && o.canceledBy == asType)
+                    if(o.Status == OrderStatus.Cancelled.ToString().ToLower() && o.cancelledBy == asType)
                     {
                         cancelledCount++;
                     }

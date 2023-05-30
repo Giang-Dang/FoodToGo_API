@@ -5,7 +5,7 @@ namespace FoodToGo_API.Models.DTO
     public class PromotionDTO
     {
         public int Id { get; set; }
-        public int DiscountCreatorMerchanId { get; set; }
+        public int DiscountCreatorMerchantId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int DiscountPercentage { get; set; }

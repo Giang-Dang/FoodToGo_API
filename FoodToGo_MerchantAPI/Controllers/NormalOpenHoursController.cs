@@ -36,7 +36,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllNormalOpenHours(
-            int? searchMerchanId = null,
+            int? searchMerchantId = null,
             int? searchDayOfWeek = null,
             int? searchSessionNo = null,
             DateTime? searchOpenTime = null,
@@ -47,11 +47,11 @@ namespace FoodToGo_API.Controllers
             {
                 List<NormalOpenHours> normalOpenHoursList = await _dbNormalOpenHours.GetAllAsync(null, pageSize, pageNumber);
 
-                if (searchMerchanId.HasValue)
+                if (searchMerchantId.HasValue)
                 {
-                    if (searchMerchanId > 0)
+                    if (searchMerchantId > 0)
                     {
-                        normalOpenHoursList = normalOpenHoursList.Where(b => b.MerchantId == searchMerchanId).ToList();
+                        normalOpenHoursList = normalOpenHoursList.Where(b => b.MerchantId == searchMerchantId).ToList();
                     }
                     else
                     {
@@ -64,7 +64,7 @@ namespace FoodToGo_API.Controllers
 
                 if (searchDayOfWeek.HasValue)
                 {
-                    if (searchDayOfWeek > 0)
+                    if (searchDayOfWeek >= 0)
                     {
                         normalOpenHoursList = normalOpenHoursList.Where(b => b.DayOfWeek == searchDayOfWeek).ToList();
                     }

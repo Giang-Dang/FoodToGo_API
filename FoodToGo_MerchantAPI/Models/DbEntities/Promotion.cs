@@ -10,7 +10,7 @@ namespace FoodToGo_API.Models.DbEntities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [ForeignKey("Merchant")]
-        public int DiscountCreatorMerchanId { get; set; }
+        public int DiscountCreatorMerchantId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public virtual Merchant Merchant { get; set; }
         public string Name { get; set; }
