@@ -9,5 +9,6 @@ namespace FoodToGo_API.Models.DTO.CreateDTO
         public string LastName { get; set; }
         public string MiddleName { get; set; }
         public string Address { get; set; }
+        public double Rating { get; set; } = 0;
     }
 }

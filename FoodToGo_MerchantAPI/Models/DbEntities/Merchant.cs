@@ -19,5 +19,6 @@ namespace FoodToGo_API.Models.DbEntities
         public List<NormalOpenHours> NormalOpenHoursList { get; set; }
         public List<OverrideOpenHours> OverrideOpenHoursList { get; set; }
         public bool IsDeleted { get; set; } = false;
+        public double Rating { get; set; }
     }
 }

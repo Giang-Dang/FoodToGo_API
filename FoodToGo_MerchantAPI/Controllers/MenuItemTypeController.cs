@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
 using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FoodToGo_API.Controllers
 {
@@ -64,7 +65,7 @@ namespace FoodToGo_API.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetMenuItemType")]
+        [HttpGet("byname/{name}", Name = "GetMenuItemId")]
         [Authorize]
         [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -73,7 +74,54 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetMenuItemType(int id)
+        public async Task<ActionResult<APIResponse>> GetMenuItemId(string name)
+        {
+            try
+            {
+                if (name.IsNullOrEmpty())
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("name cannot be null or empty.");
+                    return BadRequest(_response);
+                }
+
+                var menuItemType = await _dbMenuItemType.GetAsync(b => b.Name.ToLower() == name.ToLower());
+                if (menuItemType == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add("MenuItemType is not found.");
+                    return NotFound(_response);
+                }
+
+                var menuItemTypeDTO = _mapper.Map<MenuItemTypeDTO>(menuItemType);
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = menuItemTypeDTO;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpGet("{id:int}", Name = "GetMenuItemName")]
+        [Authorize]
+        [ResponseCache(Duration = 1000)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetMenuItemName(int id)
         {
             try
             {

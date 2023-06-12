@@ -44,12 +44,13 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMerchants(
-            [FromQuery(Name = "OpenHoursCheckTime")] DateTime? openHoursCheckTime = null,
-            [FromQuery(Name = "SearchName")] string? searchName = null, 
-            [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
-            [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
-            [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
+            DateTime? openHoursCheckTime = null,
+            string? searchName = null, 
+            double? startLatitude = null,
+            double? startLongitude = null,
+            double? searchDistanceInKm = null,
             bool? isDeleted = null,
+            double? minRating = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -70,6 +71,11 @@ namespace FoodToGo_API.Controllers
                 if (isDeleted.HasValue)
                 {
                     merchantList = merchantList.Where(m => m.IsDeleted == isDeleted).ToList();
+                }
+
+                if (minRating.HasValue)
+                {
+                    merchantList = merchantList.Where(m => m.Rating > minRating.Value).ToList();
                 }
 
                 //filter by distance

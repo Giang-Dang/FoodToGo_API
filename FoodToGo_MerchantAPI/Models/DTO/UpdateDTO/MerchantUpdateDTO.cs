@@ -14,5 +14,6 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
         public double GeoLatitude { get; set; }
         public double GeoLongitude { get; set; }
         public bool IsDeleted { get; set; }
+        public double Rating { get; set; }
     }
 }

@@ -43,6 +43,7 @@ namespace FoodToGo_API.Controllers
             string? searchVehicleType = null,
             string? searchVehicleNumberPlate = null,
             bool? IsAvailable = null,
+            double? minRating = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -70,6 +71,11 @@ namespace FoodToGo_API.Controllers
                 if (IsAvailable.HasValue)
                 {
                     shipperList = await GetAvailableShippersAsync(shipperList);
+                }
+
+                if (minRating.HasValue)
+                {
+                    shipperList = shipperList.Where(s => s.Rating > minRating.Value).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

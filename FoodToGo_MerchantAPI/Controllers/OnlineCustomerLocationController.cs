@@ -36,9 +36,9 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllOnlineCustomerLocations(
-            [FromQuery(Name = "StartLatitude")] double? startLatitude = null,
-            [FromQuery(Name = "StartLongitude")] double? startLongitude = null,
-            [FromQuery(Name = "distanceInKm")] double? searchDistanceInKm = null,
+            double? startLatitude = null,
+            double? startLongitude = null,
+            double? searchDistanceInKm = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try

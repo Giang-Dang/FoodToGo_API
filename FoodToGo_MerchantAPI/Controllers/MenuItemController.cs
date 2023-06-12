@@ -39,19 +39,20 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMenuItems(
-            int? searchMerchanId = null,
+            int? searchMerchantId = null,
             int? searchItemTypeId = null,
+            double? minRating = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<MenuItem> menuItemList = await _dbMenuItem.GetAllAsync(null, pageSize, pageNumber);
 
-                if (searchMerchanId.HasValue)
+                if (searchMerchantId.HasValue)
                 {
-                    if (searchMerchanId > 0)
+                    if (searchMerchantId > 0)
                     {
-                        menuItemList = menuItemList.Where(b => b.MerchantId == searchMerchanId).ToList();
+                        menuItemList = menuItemList.Where(b => b.MerchantId == searchMerchantId).ToList();
                     }
                     else
                     {
@@ -75,6 +76,11 @@ namespace FoodToGo_API.Controllers
                         _response.ErrorMessages.Add("Invalid ItemType Id!");
                         return BadRequest(_response);
                     }
+                }
+
+                if (minRating.HasValue)
+                {
+                    menuItemList = menuItemList.Where(b => b.Rating > minRating.Value).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

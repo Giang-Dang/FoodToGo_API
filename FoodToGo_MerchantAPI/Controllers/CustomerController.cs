@@ -35,6 +35,7 @@ namespace FoodToGo_API.Controllers
         public async Task<ActionResult<APIResponse>> GetAllCustomers(
             string? searchName = null,
             string? searchAddress = null,
+            double? minRating = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -52,6 +53,11 @@ namespace FoodToGo_API.Controllers
                 {
                     searchAddress = searchAddress.ToLower();
                     customerList = customerList.Where(c => c.Address.ToLower().Contains(searchAddress)).ToList();
+                }
+
+                if(minRating.HasValue)
+                {
+                    customerList = customerList.Where(c => c.Rating > minRating.Value).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

@@ -14,5 +14,6 @@ namespace FoodToGo_API.Models.DbEntities
         public string MiddleName { get; set; }
         public string VehicleType { get; set; }
         public string VehicleNumberPlate { get; set; }
+        public double Rating { get; set; }
     }
 }

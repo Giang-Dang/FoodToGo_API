@@ -37,6 +37,7 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllPromotions(
             int? searchMerchantId = null,
+            DateTime? checkingDate = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -56,6 +57,11 @@ namespace FoodToGo_API.Controllers
                         _response.ErrorMessages.Add("Invalid Merchant Id!");
                         return BadRequest(_response);
                     }
+                }
+
+                if(checkingDate.HasValue)
+                {
+                    promotionList = promotionList.Where(e => e.StartDate <= checkingDate.Value && e.EndDate >= checkingDate.Value).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

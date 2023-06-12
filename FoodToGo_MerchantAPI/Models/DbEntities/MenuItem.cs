@@ -19,5 +19,6 @@ namespace FoodToGo_API.Models.DbEntities
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
         public bool IsClosed { get; set; }
+        public double Rating { get; set; }
     }
 }
