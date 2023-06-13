@@ -40,8 +40,10 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMenuItems(
             int? searchMerchantId = null,
+            string? searchName = null,
             int? searchItemTypeId = null,
             double? minRating = null,
+            bool? isClosed = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -63,6 +65,11 @@ namespace FoodToGo_API.Controllers
                     }
                 }
 
+                if (!searchName.IsNullOrEmpty())
+                {
+                    menuItemList = menuItemList.Where(b => b.Name.ToLower().Contains(searchName!.ToLower())).ToList();
+                }
+
                 if (searchItemTypeId.HasValue)
                 {
                     if (searchItemTypeId > 0)
@@ -76,6 +83,11 @@ namespace FoodToGo_API.Controllers
                         _response.ErrorMessages.Add("Invalid ItemType Id!");
                         return BadRequest(_response);
                     }
+                }
+
+                if(isClosed.HasValue)
+                {
+                    menuItemList = menuItemList.Where(b => b.IsClosed == isClosed).ToList();
                 }
 
                 if (minRating.HasValue)
