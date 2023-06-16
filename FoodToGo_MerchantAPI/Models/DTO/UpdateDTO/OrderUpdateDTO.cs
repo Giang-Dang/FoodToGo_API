@@ -5,7 +5,7 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
     {
         public int Id { get; set; }
         public int MerchantId { get; set; }
-        public int ShipperId { get; set; }
+        public int? ShipperId { get; set; }
         public int CustomerId { get; set; }
         public int? PromotionId { get; set; }
         public DateTime PlacedTime { get; set; }

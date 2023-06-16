@@ -14,10 +14,10 @@ namespace FoodToGo_API.Models.DbEntities
         [ForeignKey("MerchantId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public virtual Merchant Merchant { get; set; }
-        public int ShipperId { get; set; }
+        public int? ShipperId { get; set; }
         [ForeignKey("ShipperId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public virtual Shipper Shipper { get; set; }
+        public virtual Shipper? Shipper { get; set; }
         public int CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
