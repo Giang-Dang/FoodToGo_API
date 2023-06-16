@@ -44,6 +44,9 @@ namespace FoodToGo_API.Controllers
             int? searchPromotionId,
             string? searchStatus = null,
             DateTime? searchPlacedDate = null,
+            double? startLatitude = null,
+            double? startLongitude = null,
+            double? searchDistanceInKm = null,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -91,6 +94,25 @@ namespace FoodToGo_API.Controllers
                 {
                     searchStatus = searchStatus.ToLower();
                     orderList = orderList.Where(e => e.Status == searchStatus).ToList();
+                }
+
+                //filter by distance
+                if (startLatitude.HasValue && startLongitude.HasValue && searchDistanceInKm.HasValue)
+                {
+                    List<Order> deliverOrderWithinDistance = new List<Order>();
+                    foreach (var o in orderList)
+                    {
+                        double distance = Math.Sqrt(
+                            Math.Pow(111.2 * (o.DeliveryLatitude - startLatitude.Value), 2) +
+                            Math.Pow(111.2 * (startLongitude.Value - o.DeliveryLongitude) * Math.Cos(o.DeliveryLatitude / 57.3), 2)
+                        );
+                        if (distance <= searchDistanceInKm.Value)
+                        {
+                            deliverOrderWithinDistance.Add(o);
+                        }
+                    }
+
+                    orderList = new(deliverOrderWithinDistance);
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

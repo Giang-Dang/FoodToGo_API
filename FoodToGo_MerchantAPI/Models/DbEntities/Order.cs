@@ -36,6 +36,10 @@ namespace FoodToGo_API.Models.DbEntities
         public string? cancelledBy { get; set; }
         public string? CancellationReason { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
+        public string DeliveryAddress { get; set; }
+        public double DeliveryLongitude { get; set; }
+        public double DeliveryLatitude { get; set; }
+
 
     }
 }

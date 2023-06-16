@@ -18,6 +18,8 @@ namespace FoodToGo_API.Models.DTO.UpdateDTO
         public string Status { get; set; }
         public string? cancelledBy { get; set; }
         public string? CancellationReason { get; set; }
-
+        public string DeliveryAddress { get; set; }
+        public double DeliveryLongitude { get; set; }
+        public double DeliveryLatitude { get; set; }
     }
 }
