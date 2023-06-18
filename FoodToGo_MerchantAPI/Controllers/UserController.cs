@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Text.Json;
 
 namespace FoodToGo_API.Controllers
 {
@@ -27,7 +28,96 @@ namespace FoodToGo_API.Controllers
             this._response = new APIResponse();            
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetAll")]
+        [Authorize(Roles = "Admin")]
+        [CustomAuthorize("LoginFromApp", "Management")]
+        [ResponseCache(Duration = 1000)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetAll(
+            string? searchUserName,
+            string? searchRole,
+            string? searchEmail,
+            string? searchPhoneNumber,
+            int pageSize = 0,
+            int pageNumber = 1)
+        {
+            try
+            {
+                List<User> userList = await _dbUser.GetAllAsync(null, pageSize, pageNumber);
+
+                if (!searchUserName.IsNullOrEmpty())
+                {
+                    userList = userList.Where(e => e.Username.ToLower() == searchUserName!.ToLower()).ToList();
+                }
+
+                if (!searchRole.IsNullOrEmpty())
+                {
+                    userList = userList.Where(e => e.Role.ToLower() == searchRole!.ToLower()).ToList();
+                }
+                if (!searchEmail.IsNullOrEmpty())
+                {
+                    userList = userList.Where(e => e.Email.ToLower() == searchEmail!.ToLower()).ToList();
+                }
+                if (!searchPhoneNumber.IsNullOrEmpty())
+                {
+                    userList = userList.Where(e => e.PhoneNumber.ToLower() == searchPhoneNumber!.ToLower()).ToList();
+                }
+
+                Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };
+
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination));
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = _mapper.Map<List<UserDTO>>(userList);
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpGet("checkusername", Name = "IsUsernameExisting")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> IsUsernameExisting(
+            string? searchUserName)
+        {
+            try 
+            {
+                List<User> userList = await _dbUser.GetAllAsync(null, 0, 1);
+
+                if(!searchUserName.IsNullOrEmpty())
+                {
+                    userList = userList.Where(e => e.Username.ToLower() == searchUserName!.ToLower()).ToList();
+                }
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = !userList.IsNullOrEmpty();
+
+                return Ok(_response);
+            }
+            catch (Exception ex) 
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+
+            return _response;
+        }
+
+        [HttpGet("{id:int}", Name = "Get")]
         [Authorize]
         [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -133,6 +223,7 @@ namespace FoodToGo_API.Controllers
 
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
+            _response.Result = user;
             _response.ErrorMessages.Clear();
             return Ok(_response);
         }

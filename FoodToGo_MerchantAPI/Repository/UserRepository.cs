@@ -24,13 +24,34 @@ namespace FoodToGo_API.Repository
         private string secretKey;
         private int saltLength = 32;
         private int daysUntilJwtExpiration;
+        internal DbSet<User> dbSet;
         public UserRepository(ApplicationDbContext db, IMapper mapper, IConfiguration configuration)
         {
             _db = db;
             _mapper = mapper;
             secretKey = configuration.GetValue<string>("ApiSettings:JWTSecret");
             daysUntilJwtExpiration = configuration.GetValue<int>("ApiSettings:daysUntilJwtExpiration");
+            this.dbSet = db.Set<User>();
         }
+
+        public async Task<List<User>> GetAllAsync(Expression<Func<User, bool>>? filter, int pageSize, int pageNumber)
+        {
+            IQueryable<User> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (pageSize > 0)
+            {
+                if (pageSize > 100)
+                {
+                    pageSize = 100;
+                }
+                query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            }
+            return await query.ToListAsync();
+        }
+
         public async Task<User> GetAsync(Expression<Func<User, bool>> filter = null, bool tracked = true)
         {
             IQueryable<User> query = _db.Users;
@@ -49,7 +70,7 @@ namespace FoodToGo_API.Repository
         {
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
 
-            return (user == null);
+            return (user == default);
         }
 
         public async Task<LoginResponseDTO?> Login(LoginRequestDTO loginRequestDTO)

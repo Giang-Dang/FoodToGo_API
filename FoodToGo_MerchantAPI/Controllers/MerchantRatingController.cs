@@ -38,21 +38,23 @@ namespace FoodToGo_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMerchantRatings(
-            int fromUserId = 0,
-            string? fromUserType = "",
-            int toMerchantId = 0,
+            int? fromUserId,
+            string? fromUserType,
+            int? toMerchantId,
+            int? orderId,
+            double? minRating,
             int pageSize = 0, int pageNumber = 1)
         {
             try
             {
                 List<MerchantRating> merchantRatingList = await _dbMerchantRating.GetAllAsync(null, pageSize, pageNumber);
 
-                if (fromUserId > 0)
+                if (fromUserId.HasValue)
                 {
-                    merchantRatingList = merchantRatingList.Where(ur => ur.FromUserId == fromUserId).ToList();
+                    merchantRatingList = merchantRatingList.Where(ur => ur.FromUserId == fromUserId.Value).ToList();
                 }
 
-                if (fromUserType.IsNullOrEmpty())
+                if (!fromUserType.IsNullOrEmpty())
                 {
                     if (Enum.IsDefined(typeof(UserType), fromUserType))
                     {
@@ -60,9 +62,19 @@ namespace FoodToGo_API.Controllers
                     }
                 }
 
-                if (toMerchantId > 0)
+                if (toMerchantId.HasValue)
                 {
-                    merchantRatingList = merchantRatingList.Where(ur => ur.ToMerchantId == toMerchantId).ToList();
+                    merchantRatingList = merchantRatingList.Where(ur => ur.ToMerchantId == toMerchantId.Value).ToList();
+                }
+
+                if (orderId.HasValue)
+                {
+                    merchantRatingList = merchantRatingList.Where(ur => ur.OrderId == orderId.Value).ToList();
+                }
+
+                if(minRating.HasValue)
+                {
+                    merchantRatingList = merchantRatingList.Where(ur => ur.Rating >= minRating.Value).ToList();
                 }
 
                 Pagination pagination = new() { PageNumber = pageNumber, PageSize = pageSize };

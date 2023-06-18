@@ -1,5 +1,6 @@
 ﻿using FoodToGo_API.Models.DbEntities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace FoodToGo_API.Data
 {
@@ -49,6 +50,15 @@ namespace FoodToGo_API.Data
                 .HasOne(e => e.Merchant)
                 .WithMany(m => m.OverrideOpenHoursList)
                 .HasForeignKey(e => e.MerchantId);
+
+            modelBuilder.Entity<MerchantRating>()
+                .ToTable(tb => tb.HasTrigger("updateMerchantRating"));
+
+            modelBuilder.Entity<UserRating>()
+                .ToTable(tb => tb.HasTrigger("updateShipperRating"));
+
+            modelBuilder.Entity<MenuItemRating>()
+                .ToTable(tb => tb.HasTrigger("updateMenuItemRating"));
 
             //decimal => ColumnType: money
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
