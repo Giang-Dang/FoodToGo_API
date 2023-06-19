@@ -42,11 +42,11 @@ namespace FoodToGo_API.Controllers
             int? searchMerchantId,
             int? searchShipperId,
             int? searchPromotionId,
-            string? searchStatus = null,
-            DateTime? searchPlacedDate = null,
-            double? startLatitude = null,
-            double? startLongitude = null,
-            double? searchDistanceInKm = null,
+            string? searchStatus,
+            DateTime? searchPlacedDate,
+            double? startLatitude,
+            double? startLongitude,
+            double? searchDistanceInKm,
             int pageSize = 0, int pageNumber = 1)
         {
             try
