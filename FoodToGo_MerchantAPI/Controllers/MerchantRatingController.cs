@@ -153,7 +153,7 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpPost]
-        [CustomAuthorize("LoginFromApp", "Customer", "Management")]
+        [CustomAuthorize("LoginFromApp", "Customer", "Shipper", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -192,7 +192,7 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpDelete("{id:int}", Name = "DeleteMerchantRating")]
-        [CustomAuthorize("LoginFromApp", "Customer", "Management")]
+        [CustomAuthorize("LoginFromApp", "Customer", "Shipper", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -235,7 +235,7 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdateMerchantRating")]
-        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [CustomAuthorize("LoginFromApp", "Customer", "Shipper", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
