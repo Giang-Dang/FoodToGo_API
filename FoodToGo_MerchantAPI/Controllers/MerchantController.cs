@@ -38,19 +38,19 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMerchants")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> GetAllMerchants(
-            DateTime? openHoursCheckTime = null,
-            string? searchName = null, 
-            double? startLatitude = null,
-            double? startLongitude = null,
-            double? searchDistanceInKm = null,
-            bool? isDeleted = null,
-            double? minRating = null,
+            DateTime? openHoursCheckTime,
+            int? searchUserId,
+            string? searchName, 
+            double? startLatitude,
+            double? startLongitude,
+            double? searchDistanceInKm,
+            bool? isDeleted,
+            double? minRating,
             int pageSize = 0, int pageNumber = 1)
         {
             try
@@ -62,7 +62,12 @@ namespace FoodToGo_API.Controllers
                     merchantList = await GetOpenMerchantsAsync(merchantList, openHoursCheckTime.Value);
                 }
 
-                if(!string.IsNullOrEmpty(searchName))
+                if (searchUserId.HasValue)
+                {
+                    merchantList = merchantList.Where(m => m.UserId == searchUserId.Value).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(searchName))
                 {
                     searchName = searchName.ToLower();
                     merchantList = merchantList.Where(m => m.Name.ToLower().Contains(searchName)).ToList();
@@ -119,7 +124,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetMerchant")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

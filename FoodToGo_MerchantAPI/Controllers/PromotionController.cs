@@ -211,7 +211,7 @@ namespace FoodToGo_API.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdatePromotion")]
-        [CustomAuthorize("LoginFromApp", "Merchant", "Management")]
+        [CustomAuthorize("LoginFromApp", "Merchant", "Customer", "Management")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

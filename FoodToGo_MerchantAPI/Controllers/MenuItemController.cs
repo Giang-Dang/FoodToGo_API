@@ -33,7 +33,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllMenuItems")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,7 +73,7 @@ namespace FoodToGo_API.Controllers
                 {
                     if (searchItemTypeId > 0)
                     {
-                        menuItemList = menuItemList.Where(b => b.ItemTypeId == searchItemTypeId).ToList();
+                        menuItemList = menuItemList.Where(b => b.ItemTypeId == searchItemTypeId.Value).ToList();
                     }
                     else
                     {
