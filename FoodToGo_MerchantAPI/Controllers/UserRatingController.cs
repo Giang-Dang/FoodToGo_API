@@ -34,7 +34,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllUserRatings")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -121,7 +120,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("avgrating", Name = "GetAvgUserRating")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
