@@ -55,7 +55,7 @@ namespace FoodToGo_API.Data
                 .ToTable(tb => tb.HasTrigger("updateMerchantRating"));
 
             modelBuilder.Entity<UserRating>()
-                .ToTable(tb => tb.HasTrigger("updateShipperRating"));
+                .ToTable(tb => tb.HasTrigger("updateUserRating"));
 
             modelBuilder.Entity<MenuItemRating>()
                 .ToTable(tb => tb.HasTrigger("updateMenuItemRating"));

@@ -17,7 +17,10 @@ begin
 	end
 end;
 
-create trigger updateShipperRating on UserRatings
+drop trigger updateShipperRating;
+
+
+create trigger updateUserRating on UserRatings
 for update, delete, insert
 as
 begin
@@ -39,10 +42,10 @@ begin
 
 	end
 	
-	if exists (select top 1 1 from deleted)
+	if exists (select top 1 1 from inserted)
 	begin
 		declare @insertToUserId int = (select top 1 ToUserId from inserted);
-		declare @insertToUserType nvarchar(max) = (select top 1 ToUserType from deleted);
+		declare @insertToUserType nvarchar(max) = (select top 1 ToUserType from inserted);
 		declare @insertAvgRating float = (select AVG(Rating) from UserRatings where ToUserId = @insertToUserId and ToUserType like @insertToUserType);
 		
 		if(@insertToUserType like 'Customer')
@@ -75,3 +78,4 @@ begin
 		update MenuItems set Rating = @insertAvgRating where Id = @insertMenuItemId;
 	end
 end
+
