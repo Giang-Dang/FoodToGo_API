@@ -18,7 +18,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{fileName}")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Get(string fileName)

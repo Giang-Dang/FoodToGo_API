@@ -32,7 +32,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet(Name = "GetAllOrders")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -136,7 +135,6 @@ namespace FoodToGo_API.Controllers
 
         [HttpGet("{id:int}", Name = "GetOrder")]
         [Authorize]
-        [ResponseCache(Duration = 1000)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
